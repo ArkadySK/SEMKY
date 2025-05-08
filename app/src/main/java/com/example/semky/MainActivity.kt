@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -24,10 +25,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.semky.ui.theme.SEMKYTheme
+import org.intellij.lang.annotations.JdkConstants.HorizontalAlignment
 
 data class NavItem(
     var id: Int,
@@ -68,8 +71,6 @@ class MainActivity : ComponentActivity() {
                     bottomBar = {
                         NavigationBar() {
                             for (navItem in navItems) {
-                                // TODO: implementuj neskor
-                                // NavItemIcon(navItem, selItemIndex)
                                 NavigationBarItem(
                                     selected = (navItem.id == selItemIndex),
                                     onClick = { selItemIndex = navItem.id },
@@ -77,11 +78,14 @@ class MainActivity : ComponentActivity() {
                                         BadgedBox(
                                             // TODO: neskôr ?
                                             badge = {
-
                                             }
                                         ) {
-                                            Column {
+                                            Column(
+                                                horizontalAlignment = Alignment.CenterHorizontally,
+                                                verticalArrangement = Arrangement.Center
+                                            ) {
                                                 Icon(
+
                                                     imageVector = if (navItem.id == selItemIndex) navItem.selectedIcon else navItem.icon,
                                                     contentDescription = navItem.title
                                                 )
@@ -111,12 +115,6 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
         modifier = modifier
     )
 }
-
-@Composable
-fun NavItemIcon(navItem: NavItem, selItemIndex: Int, modifier: Modifier = Modifier) {
-
-}
-
 
 @Preview(showBackground = true)
 @Composable
