@@ -6,18 +6,25 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.BadgedBox
+import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -25,9 +32,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.semky.ui.theme.SEMKYTheme
+import com.example.semky.screens.SemPraceScreen
+import com.example.semky.screens.BodyScreen
+import com.example.semky.screens.KalendarScreen
 
 data class NavItem(
     var id: Int,
@@ -37,6 +48,7 @@ data class NavItem(
 )
 
 class MainActivity : ComponentActivity() {
+    @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -65,6 +77,15 @@ class MainActivity : ComponentActivity() {
                 )
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),
+                    topBar = {
+                        TopAppBar(
+                            title = { Text(text = navItems[selItemIndex].title) },
+                            colors = TopAppBarDefaults.topAppBarColors(
+                                containerColor = MaterialTheme.colorScheme.primaryContainer,
+                                titleContentColor = MaterialTheme.colorScheme.primary,
+                            )
+                        )
+                    },
                     bottomBar = {
                         NavigationBar() {
                             for (navItem in navItems) {
@@ -78,8 +99,7 @@ class MainActivity : ComponentActivity() {
                                             }
                                         ) {
                                             Column(
-                                                horizontalAlignment = Alignment.CenterHorizontally,
-                                                verticalArrangement = Arrangement.Center
+                                                horizontalAlignment = Alignment.CenterHorizontally
                                             ) {
                                                 Icon(
                                                     imageVector = if (navItem.id == selItemIndex) navItem.selectedIcon else navItem.icon,
@@ -103,21 +123,6 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-}
-
-@Composable
-fun SemPraceScreen(modifier: Modifier = Modifier) {
-    Text(text = "Sem. práce Screen", modifier = modifier)
-}
-
-@Composable
-fun BodyScreen(modifier: Modifier = Modifier) {
-    Text(text = "Body Screen", modifier = modifier)
-}
-
-@Composable
-fun KalendarScreen(modifier: Modifier = Modifier) {
-    Text(text = "Kalendár Screen", modifier = modifier)
 }
 
 @Preview(showBackground = true)
