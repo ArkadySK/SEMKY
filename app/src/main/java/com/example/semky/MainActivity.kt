@@ -39,6 +39,10 @@ import com.example.semky.ui.theme.SEMKYTheme
 import com.example.semky.screens.SemPraceScreen
 import com.example.semky.screens.BodyScreen
 import com.example.semky.screens.KalendarScreen
+import com.example.semky.data.database.SemkyDatabase
+import com.example.semky.data.repository.SemPracaRepository
+import com.example.semky.viewmodel.SemPracaViewModel
+import com.example.semky.viewmodel.SemPracaViewModelFactory
 
 data class NavItem(
     var id: Int,
@@ -48,9 +52,16 @@ data class NavItem(
 )
 
 class MainActivity : ComponentActivity() {
+    private lateinit var database: SemkyDatabase
+    private lateinit var repository: SemPracaRepository
+
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        
+        database = SemkyDatabase.getDatabase(applicationContext)
+        repository = SemPracaRepository(database.semPracaDao())
+        
         enableEdgeToEdge()
         setContent {
             SEMKYTheme {
@@ -75,6 +86,11 @@ class MainActivity : ComponentActivity() {
                         selectedIcon = Icons.Filled.DateRange
                     )
                 )
+
+                val viewModel = remember { 
+                    SemPracaViewModelFactory(repository).create(SemPracaViewModel::class.java)
+                }
+
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),
                     topBar = {
@@ -115,7 +131,13 @@ class MainActivity : ComponentActivity() {
                     }
                 ) { innerPadding ->
                     when (selItemIndex) {
-                        0 -> SemPraceScreen(modifier = Modifier.padding(innerPadding))
+                        0 -> {
+                            SemPraceScreen(
+                                modifier = Modifier.padding(innerPadding),
+                                viewModel = viewModel,
+                                onAddClick = {}
+                            )
+                        }
                         1 -> BodyScreen(modifier = Modifier.padding(innerPadding))
                         else -> KalendarScreen(modifier = Modifier.padding(innerPadding))
                     }
@@ -129,6 +151,19 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun Preview() {
     SEMKYTheme {
-        SemPraceScreen()
+//        val database = remember {
+//            val applicationContext = null
+//            SemkyDatabase.getDatabase(applicationContext)
+//        }
+//        // Initialize repository
+//        val repository = remember { SemPracaRepository(database.semPracaDao()) }
+//        // Initialize ViewModel
+//        val viewModel = remember {
+//            SemPracaViewModelFactory(repository).create(SemPracaViewModel::class.java)
+//        }
+//        SemPraceScreen(
+//            viewModel = viewModel,
+//            onAddClick = {}
+//        )
     }
 }
