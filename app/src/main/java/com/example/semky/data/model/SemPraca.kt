@@ -11,6 +11,6 @@ data class SemPraca(
     val id: Long = 0,
     val nazov: String,
     val informacie: String,
-    val terminy: List<String>,
-    val prilohy: List<Long>
+    val terminy: List<Long> = emptyList(),
+    val prilohy: List<Long> = emptyList()
 )
