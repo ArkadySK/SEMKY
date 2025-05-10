@@ -30,7 +30,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.semky.ui.theme.SEMKYTheme
-import org.intellij.lang.annotations.JdkConstants.HorizontalAlignment
 
 data class NavItem(
     var id: Int,
@@ -85,7 +84,6 @@ class MainActivity : ComponentActivity() {
                                                 verticalArrangement = Arrangement.Center
                                             ) {
                                                 Icon(
-
                                                     imageVector = if (navItem.id == selItemIndex) navItem.selectedIcon else navItem.icon,
                                                     contentDescription = navItem.title
                                                 )
@@ -98,10 +96,11 @@ class MainActivity : ComponentActivity() {
                         }
                     }
                 ) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
+                    when (selItemIndex) {
+                        0 -> SemPraceScreen(modifier = Modifier.padding(innerPadding))
+                        1 -> BodyScreen(modifier = Modifier.padding(innerPadding))
+                        else -> KalendarScreen(modifier = Modifier.padding(innerPadding))
+                    }
                 }
             }
         }
@@ -109,17 +108,24 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
+fun SemPraceScreen(modifier: Modifier = Modifier) {
+    Text(text = "Sem. práce Screen", modifier = modifier)
+}
+
+@Composable
+fun BodyScreen(modifier: Modifier = Modifier) {
+    Text(text = "Body Screen", modifier = modifier)
+}
+
+@Composable
+fun KalendarScreen(modifier: Modifier = Modifier) {
+    Text(text = "Kalendár Screen", modifier = modifier)
 }
 
 @Preview(showBackground = true)
 @Composable
-fun GreetingPreview() {
+fun Preview() {
     SEMKYTheme {
-        Greeting("Android")
+        SemPraceScreen()
     }
 }
