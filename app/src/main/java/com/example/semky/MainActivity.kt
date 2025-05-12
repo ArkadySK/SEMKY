@@ -37,7 +37,6 @@ import com.example.semky.screens.BodyScreen
 import com.example.semky.screens.KalendarScreen
 import com.example.semky.data.database.SemkyDatabase
 import com.example.semky.data.repository.SemPracaRepository
-import com.example.semky.screens.AddEditSemPracaScreen
 import com.example.semky.viewmodel.SemPracaViewModel
 import com.example.semky.viewmodel.SemPracaViewModelFactory
 
@@ -63,7 +62,6 @@ class MainActivity : ComponentActivity() {
         setContent {
             SEMKYTheme {
                 var selItemIndex by remember { mutableStateOf(0) }
-                var showAddDialog by remember { mutableStateOf(false) }
                 
                 val navItems = listOf(
                     NavItem(
@@ -133,20 +131,8 @@ class MainActivity : ComponentActivity() {
                         0 -> {
                             SemPraceScreen(
                                 modifier = Modifier.padding(innerPadding),
-                                viewModel = viewModel,
-                                onAddClick = { showAddDialog = true }
+                                viewModel = viewModel
                             )
-                            
-                            if (showAddDialog) {
-                                BasicAlertDialog(
-                                    onDismissRequest = { showAddDialog = false }
-                                ) {
-                                    AddEditSemPracaScreen(
-                                        viewModel = viewModel,
-                                        onNavigateBack = { showAddDialog = false }
-                                    )
-                                }
-                            }
                         }
                         1 -> BodyScreen(modifier = Modifier.padding(innerPadding))
                         else -> KalendarScreen(modifier = Modifier.padding(innerPadding))

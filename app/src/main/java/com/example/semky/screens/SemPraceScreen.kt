@@ -1,5 +1,6 @@
 package com.example.semky.screens
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -14,8 +15,10 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -23,30 +26,31 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.semky.data.model.SemPraca
 import com.example.semky.viewmodel.SemPracaViewModel
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SemPraceScreen(
     viewModel: SemPracaViewModel,
-    onAddClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val semPraceList by viewModel.semPrace.collectAsState()
+    var selectedPraca by remember { mutableStateOf<SemPraca?>(null) }
+    var showDialog by remember { mutableStateOf(false) }
+    var isEditMode by remember { mutableStateOf(false) }
 
     Column(
         modifier = modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(
-            text = "Zoznam semestrálnych prác:",
-            style = MaterialTheme.typography.headlineMedium,
-            modifier = Modifier.padding(16.dp)
-        )
-
+        Spacer(modifier = Modifier.height(16.dp))
         LazyColumn(
             modifier = Modifier
                 .weight(1f)
@@ -57,13 +61,22 @@ fun SemPraceScreen(
             items(semPraceList) { praca ->
                 PracaCard(
                     praca = praca,
-                    onDelete = { viewModel.deletePraca(praca) }
+                    onDelete = { viewModel.deletePraca(praca) },
+                    onClick = { 
+                        selectedPraca = praca
+                        isEditMode = false
+                        showDialog = true
+                    }
                 )
             }
         }
 
         Button(
-            onClick = onAddClick,
+            onClick = { 
+                selectedPraca = null
+                isEditMode = true
+                showDialog = true
+            },
             modifier = Modifier.padding(16.dp)
         ) {
             Icon(
@@ -74,29 +87,55 @@ fun SemPraceScreen(
             Text(text = "Pridať novú prácu")
         }
     }
+
+    if (showDialog) {
+        BasicAlertDialog(
+            modifier = modifier.background(color = MaterialTheme.colorScheme.background),
+            onDismissRequest = { showDialog = false }
+        ) {
+            EditSemPracaScreen(
+                viewModel = viewModel,
+                existingPraca = selectedPraca,
+                isEditMode = isEditMode,
+                onNavigateBack = { showDialog = false }
+            )
+        }
+    }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PracaCard(
     praca: SemPraca,
     onDelete: () -> Unit,
+    onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Card(
         modifier = modifier.fillMaxWidth(),
+        onClick = onClick
     ) {
         Column(
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier.padding(8.dp)
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
             ) {
-                Text(
-                    text = praca.nazov,
-                    style = MaterialTheme.typography.titleMedium
-                )
+                Column {
+                    Text(
+                        text = praca.nazov,
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                    if (praca.isFinished) {
+                        Text(
+                            text = "Dokončené",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                }
                 IconButton(onClick = onDelete) {
                     Icon(
                         imageVector = Icons.Default.Delete,
@@ -105,13 +144,7 @@ fun PracaCard(
                 }
             }
             
-            /*Text(
-                text = praca.informacie,
-                style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier.padding(top = 8.dp)
-            )
-            
-            if (praca.terminy.isNotEmpty()) {
+            /*if (praca.terminy.isNotEmpty()) {
                 Text(
                     text = "Termíny:",
                     style = MaterialTheme.typography.titleSmall,

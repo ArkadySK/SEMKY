@@ -11,7 +11,7 @@ import com.example.semky.data.model.SemPraca
 
 @Database(
     entities = [SemPraca::class],
-    version = 3, exportSchema = false
+    version = 4, exportSchema = false
 )
 @TypeConverters(Converters::class)
 abstract class SemkyDatabase : RoomDatabase() {
