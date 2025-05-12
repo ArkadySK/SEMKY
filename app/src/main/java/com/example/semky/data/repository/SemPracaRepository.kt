@@ -5,7 +5,7 @@ import com.example.semky.data.model.SemPraca
 import kotlinx.coroutines.flow.Flow
 
 class SemPracaRepository(private val semPracaDao: SemPracaDao) {
-    suspend fun getAllPrace(): List<SemPraca> = semPracaDao.getAllPrace()
+    fun getAllPrace(): Flow<List<SemPraca>> = semPracaDao.getAllPrace()
 
     suspend fun getPracaById(id: Long): SemPraca? = semPracaDao.getPracaById(id)
 

@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface SemPracaDao {
     @Query("SELECT * FROM sem_prace")
-    suspend fun getAllPrace(): List<SemPraca>
+    fun getAllPrace(): Flow<List<SemPraca>>
 
     @Query("SELECT * FROM sem_prace WHERE id = :id")
     suspend fun getPracaById(id: Long): SemPraca?
