@@ -8,7 +8,8 @@ data class SemPraca(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
     val nazov: String,
-    val informacie: String
+    val informacie: String,
+    val isFinished: Boolean = false
     //val terminy: List<Long> = emptyList(),
     //val prilohy: List<Long> = emptyList()
 )
