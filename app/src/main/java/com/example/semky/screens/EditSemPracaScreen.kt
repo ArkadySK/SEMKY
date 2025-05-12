@@ -27,7 +27,7 @@ import com.example.semky.viewmodel.SemPracaViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddEditSemPracaScreen(
+fun EditSemPracaScreen(
     viewModel: SemPracaViewModel,
     onNavigateBack: () -> Unit,
     modifier: Modifier = Modifier
@@ -82,7 +82,8 @@ fun AddEditSemPracaScreen(
             onClick = {
                 val novaPraca = SemPraca(
                     nazov = nazov,
-                    informacie = informacie
+                    informacie = informacie,
+                    isFinished = false
                     //terminy = emptyList(), // TODO pridaj neskor
                     //prilohy = emptyList() // TODO implementovane neskôr
                 )
