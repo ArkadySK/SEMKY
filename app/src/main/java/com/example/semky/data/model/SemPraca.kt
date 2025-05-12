@@ -7,9 +7,9 @@ import androidx.room.PrimaryKey
 data class SemPraca(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
-    val nazov: String,
-    val informacie: String,
-    val isFinished: Boolean = false
-    //val terminy: List<Long> = emptyList(),
-    //val prilohy: List<Long> = emptyList()
+    val name: String,
+    val description: String,
+    val isFinished: Boolean = false,
+    val deadlines: List<Long> = emptyList(),
+    val attachments: List<Long> = emptyList()
 )

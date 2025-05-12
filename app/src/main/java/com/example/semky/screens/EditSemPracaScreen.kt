@@ -20,8 +20,8 @@ fun EditSemPracaScreen(
     onNavigateBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var nazov by remember { mutableStateOf(existingPraca?.nazov ?: "") }
-    var informacie by remember { mutableStateOf(existingPraca?.informacie ?: "") }
+    var name by remember { mutableStateOf(existingPraca?.name ?: "") }
+    var description by remember { mutableStateOf(existingPraca?.description ?: "") }
     var isEditing by remember { mutableStateOf(existingPraca == null || isEditMode) }
 
     Column(
@@ -35,7 +35,7 @@ fun EditSemPracaScreen(
             text = when {
                 existingPraca == null -> "Nová semestrálna práca"
                 isEditing -> "Úprava semestrálnej práce"
-                else -> existingPraca.nazov
+                else -> existingPraca.name
             },
             style = MaterialTheme.typography.headlineMedium,
             modifier = Modifier.padding(bottom = 16.dp)
@@ -44,8 +44,8 @@ fun EditSemPracaScreen(
         // Edit / Add mod 
         if (isEditing) {
             OutlinedTextField(
-                value = nazov,
-                onValueChange = { nazov = it },
+                value = name,
+                onValueChange = { name = it },
                 label = { Text("Názov") },
                 modifier = Modifier.fillMaxWidth()
             )
@@ -53,8 +53,8 @@ fun EditSemPracaScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             OutlinedTextField(
-                value = informacie,
-                onValueChange = { informacie = it },
+                value = description,
+                onValueChange = { description = it },
                 label = { Text("Informácie") },
                 modifier = Modifier.fillMaxWidth(),
                 minLines = 3
@@ -66,23 +66,23 @@ fun EditSemPracaScreen(
                 onClick = {
                     if (existingPraca == null) {
                         val novaPraca = SemPraca(
-                            nazov = nazov,
-                            informacie = informacie,
+                            name = name,
+                            description = description,
                             isFinished = false,
-                            //terminy = emptyList(), // TODO pridaj neskor
-                            //prilohy = emptyList() // TODO implementovane neskôr
+                            deadlines = emptyList(), // TODO pridaj neskor
+                            attachments = emptyList() // TODO implementovane neskôr
                         )
                         viewModel.addPraca(novaPraca)
                     } else {
                         val updatedPraca = existingPraca.copy(
-                            nazov = nazov,
-                            informacie = informacie
+                            name = name,
+                            description = description
                         )
                         viewModel.updatePraca(updatedPraca)
                     }
                     onNavigateBack()
                 },
-                enabled = nazov.isNotEmpty() && informacie.isNotEmpty(),
+                enabled = name.isNotEmpty() && description.isNotEmpty(),
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text("Uložiť")
@@ -101,7 +101,7 @@ fun EditSemPracaScreen(
                         modifier = Modifier.padding(bottom = 8.dp)
                     )
                     Text(
-                        text = informacie,
+                        text = description,
                         style = MaterialTheme.typography.bodyMedium
                     )
 
@@ -120,16 +120,17 @@ fun EditSemPracaScreen(
                             onClick = {
                                 existingPraca?.let {
                                     viewModel.updatePraca(it.copy(isFinished = !it.isFinished))
+                                    // TODO: bodyViewmodel.calculatePoints(it.Id)
                                     onNavigateBack()
                                 }
                             },
                             enabled = existingPraca?.isFinished == false
                         ) {
                             Text(
-                                text = if (existingPraca?.isFinished == true) 
-                                    "Dokončené" 
-                                else 
-                                    "Označiť ako dokončené"
+                                text = if (existingPraca?.isFinished == true)
+                                    "Dokončené!"
+                                else
+                                    "Dokonči"
                             )
                         }
                     }

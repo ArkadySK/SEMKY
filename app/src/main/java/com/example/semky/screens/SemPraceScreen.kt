@@ -125,7 +125,7 @@ fun PracaCard(
             ) {
                 Column {
                     Text(
-                        text = praca.nazov,
+                        text = praca.name,
                         style = MaterialTheme.typography.titleMedium
                     )
                     if (praca.isFinished) {
@@ -144,13 +144,13 @@ fun PracaCard(
                 }
             }
             
-            /*if (praca.terminy.isNotEmpty()) {
+            /*if (praca.deadlines.isNotEmpty()) {
                 Text(
                     text = "Termíny:",
                     style = MaterialTheme.typography.titleSmall,
                     modifier = Modifier.padding(top = 8.dp)
                 )
-                praca.terminy.forEach { termin ->
+                praca.deadlines.forEach { termin ->
                     Text(
                         text = "• $termin",
                         style = MaterialTheme.typography.bodyMedium
