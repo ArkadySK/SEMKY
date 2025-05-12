@@ -9,7 +9,10 @@ import com.example.semky.data.converters.Converters
 import com.example.semky.data.dao.SemPracaDao
 import com.example.semky.data.model.SemPraca
 
-@Database(entities = [SemPraca::class], version = 1, exportSchema = false)
+@Database(
+    entities = [SemPraca::class],
+    version = 3, exportSchema = false
+)
 @TypeConverters(Converters::class)
 abstract class SemkyDatabase : RoomDatabase() {
     abstract fun semPracaDao(): SemPracaDao
@@ -25,6 +28,7 @@ abstract class SemkyDatabase : RoomDatabase() {
                     SemkyDatabase::class.java,
                     "semky_database"
                 )
+                .fallbackToDestructiveMigration()
                 .build()
                 .also { Instance = it }
             }

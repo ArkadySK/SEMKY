@@ -12,17 +12,17 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface SemPracaDao {
     @Query("SELECT * FROM sem_prace")
-    fun getAllPrace(): Flow<List<SemPraca>>
+    suspend fun getAllPrace(): List<SemPraca>
 
     @Query("SELECT * FROM sem_prace WHERE id = :id")
-    fun getPracaById(id: Long): SemPraca?
+    suspend fun getPracaById(id: Long): SemPraca?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertPraca(praca: SemPraca): Long
+    suspend fun insertPraca(praca: SemPraca): Long
 
     @Update
-    fun updatePraca(praca: SemPraca)
+    suspend fun updatePraca(praca: SemPraca)
 
     @Delete
-    fun deletePraca(praca: SemPraca)
+    suspend fun deletePraca(praca: SemPraca)
 } 

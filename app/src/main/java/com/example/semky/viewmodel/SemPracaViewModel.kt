@@ -6,10 +6,21 @@ import androidx.lifecycle.viewModelScope
 import com.example.semky.data.model.SemPraca
 import com.example.semky.data.repository.SemPracaRepository
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class SemPracaViewModel(private val repository: SemPracaRepository) : ViewModel() {
-    val allPrace: Flow<List<SemPraca>> = repository.getAllPrace()
+
+    private val _semPrace = MutableStateFlow<List<SemPraca>>(emptyList())
+    val semPrace: StateFlow<List<SemPraca>> = _semPrace.asStateFlow()
+
+    init {
+        viewModelScope.launch {
+            _semPrace.value = repository.getAllPrace()
+        }
+    }
 
     fun addPraca(praca: SemPraca) {
         viewModelScope.launch {

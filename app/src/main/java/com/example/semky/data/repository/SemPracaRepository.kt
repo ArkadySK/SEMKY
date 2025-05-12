@@ -5,13 +5,13 @@ import com.example.semky.data.model.SemPraca
 import kotlinx.coroutines.flow.Flow
 
 class SemPracaRepository(private val semPracaDao: SemPracaDao) {
-    fun getAllPrace(): Flow<List<SemPraca>> = semPracaDao.getAllPrace()
+    suspend fun getAllPrace(): List<SemPraca> = semPracaDao.getAllPrace()
 
-    fun getPracaById(id: Long): SemPraca? = semPracaDao.getPracaById(id)
+    suspend fun getPracaById(id: Long): SemPraca? = semPracaDao.getPracaById(id)
 
-    fun insertPraca(praca: SemPraca): Long = semPracaDao.insertPraca(praca)
+    suspend fun insertPraca(praca: SemPraca): Long = semPracaDao.insertPraca(praca)
 
-    fun updatePraca(praca: SemPraca) = semPracaDao.updatePraca(praca)
+    suspend fun updatePraca(praca: SemPraca) = semPracaDao.updatePraca(praca)
 
-    fun deletePraca(praca: SemPraca) = semPracaDao.deletePraca(praca)
+    suspend fun deletePraca(praca: SemPraca) = semPracaDao.deletePraca(praca)
 } 

@@ -35,7 +35,7 @@ fun SemPraceScreen(
     onAddClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val prace by viewModel.allPrace.collectAsState(initial = emptyList())
+    val semPraceList by viewModel.semPrace.collectAsState()
 
     Column(
         modifier = modifier.fillMaxSize(),
@@ -54,7 +54,7 @@ fun SemPraceScreen(
                 .padding(horizontal = 16.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            items(prace) { praca ->
+            items(semPraceList) { praca ->
                 PracaCard(
                     praca = praca,
                     onDelete = { viewModel.deletePraca(praca) }

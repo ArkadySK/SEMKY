@@ -82,9 +82,9 @@ fun AddEditSemPracaScreen(
             onClick = {
                 val novaPraca = SemPraca(
                     nazov = nazov,
-                    informacie = informacie,
-                    terminy = emptyList(), // TODO pridaj neskor
-                    prilohy = emptyList() // TODO implementovane neskôr
+                    informacie = informacie
+                    //terminy = emptyList(), // TODO pridaj neskor
+                    //prilohy = emptyList() // TODO implementovane neskôr
                 )
                 viewModel.addPraca(novaPraca)
                 onNavigateBack()
