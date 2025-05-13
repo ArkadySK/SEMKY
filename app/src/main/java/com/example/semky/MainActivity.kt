@@ -85,7 +85,7 @@ class MainActivity : ComponentActivity() {
                 )
 
                 val viewModel = remember {
-                    SemPracaViewModelFactory(repository).create(SemPracaViewModel::class.java)
+                    SemPracaViewModelFactory(repository, applicationContext).create(SemPracaViewModel::class.java)
                 }
 
                 Scaffold(

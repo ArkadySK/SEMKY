@@ -144,19 +144,40 @@ fun PracaCard(
                 }
             }
             
-            /*if (praca.deadlines.isNotEmpty()) {
+            if (praca.deadlines.isNotEmpty()) {
+                Spacer(modifier = Modifier.height(8.dp))
                 Text(
                     text = "Termíny:",
                     style = MaterialTheme.typography.titleSmall,
                     modifier = Modifier.padding(top = 8.dp)
                 )
-                praca.deadlines.forEach { termin ->
+                praca.deadlines.forEach { deadline ->
                     Text(
-                        text = "• $termin",
+                        text = "• ${formatDate(deadline)}",
                         style = MaterialTheme.typography.bodyMedium
                     )
                 }
-            }*/
+            }
+
+            if (praca.attachments.isNotEmpty()) {
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = "Prílohy:",
+                    style = MaterialTheme.typography.titleSmall,
+                    modifier = Modifier.padding(top = 8.dp)
+                )
+                praca.attachments.forEach { attachmentId ->
+                    Text(
+                        text = "• Príloha $attachmentId",
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                }
+            }
         }
     }
+}
+
+private fun formatDate(timestamp: Long): String {
+    val sdf = java.text.SimpleDateFormat("dd.MM.yyyy", java.util.Locale.getDefault())
+    return sdf.format(java.util.Date(timestamp))
 } 

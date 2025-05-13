@@ -1,15 +1,27 @@
- package com.example.semky.screens
+package com.example.semky.screens
 
+import android.app.DatePickerDialog
+import android.content.Context
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.example.semky.data.model.SemPraca
 import com.example.semky.viewmodel.SemPracaViewModel
+import java.util.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -22,7 +34,10 @@ fun EditSemPracaScreen(
 ) {
     var name by remember { mutableStateOf(existingPraca?.name ?: "") }
     var description by remember { mutableStateOf(existingPraca?.description ?: "") }
+    var deadlines by remember { mutableStateOf(existingPraca?.deadlines ?: emptyList()) }
+    var attachments by remember { mutableStateOf(existingPraca?.attachments ?: emptyList()) }
     var isEditing by remember { mutableStateOf(existingPraca == null || isEditMode) }
+    val context = LocalContext.current
 
     Column(
         modifier = modifier
@@ -62,6 +77,116 @@ fun EditSemPracaScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
+            // Deadlines section
+            Card(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Column(
+                    modifier = Modifier.padding(16.dp)
+                ) {
+                    Text(
+                        text = "Termíny",
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    deadlines.forEach { deadline ->
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = formatDate(deadline),
+                                style = MaterialTheme.typography.bodyMedium
+                            )
+                            IconButton(
+                                onClick = {
+                                    deadlines = deadlines.filter { it != deadline }
+                                }
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Delete,
+                                    contentDescription = "Remove deadline"
+                                )
+                            }
+                        }
+                    }
+                    Button(
+                        onClick = { showDatePicker(context) { timestamp -> 
+                            deadlines = deadlines + timestamp
+                        }},
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Add,
+                            contentDescription = "Add deadline"
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text("Pridať termín")
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Attachments section
+            Card(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Column(
+                    modifier = Modifier.padding(16.dp)
+                ) {
+                    Text(
+                        text = "Prílohy",
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    attachments.forEach { attachmentId ->
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = "Príloha $attachmentId",
+                                style = MaterialTheme.typography.bodyMedium
+                            )
+                            IconButton(
+                                onClick = {
+                                    attachments = attachments.filter { it != attachmentId }
+                                }
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Delete,
+                                    contentDescription = "Remove attachment"
+                                )
+                            }
+                        }
+                    }
+                    val launcher = rememberLauncherForActivityResult(
+                        contract = ActivityResultContracts.GetContent()
+                    ) { uri: Uri? ->
+                        uri?.let { selectedUri ->
+                            val attachmentId = viewModel.addAttachment(selectedUri)
+                            attachments = attachments + attachmentId
+                        }
+                    }
+                    Button(
+                        onClick = { launcher.launch("*/*") },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Add,
+                            contentDescription = "Add attachment"
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text("Pridať prílohu")
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(24.dp))
+
             Button(
                 onClick = {
                     if (existingPraca == null) {
@@ -69,14 +194,16 @@ fun EditSemPracaScreen(
                             name = name,
                             description = description,
                             isFinished = false,
-                            deadlines = emptyList(), // TODO pridaj neskor
-                            attachments = emptyList() // TODO implementovane neskôr
+                            deadlines = deadlines,
+                            attachments = attachments
                         )
                         viewModel.addPraca(novaPraca)
                     } else {
                         val updatedPraca = existingPraca.copy(
                             name = name,
-                            description = description
+                            description = description,
+                            deadlines = deadlines,
+                            attachments = attachments
                         )
                         viewModel.updatePraca(updatedPraca)
                     }
@@ -104,6 +231,34 @@ fun EditSemPracaScreen(
                         text = description,
                         style = MaterialTheme.typography.bodyMedium
                     )
+
+                    if (deadlines.isNotEmpty()) {
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Text(
+                            text = "Termíny:",
+                            style = MaterialTheme.typography.titleMedium
+                        )
+                        deadlines.forEach { deadline ->
+                            Text(
+                                text = "• ${formatDate(deadline)}",
+                                style = MaterialTheme.typography.bodyMedium
+                            )
+                        }
+                    }
+
+                    if (attachments.isNotEmpty()) {
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Text(
+                            text = "Prílohy:",
+                            style = MaterialTheme.typography.titleMedium
+                        )
+                        attachments.forEach { attachmentId ->
+                            Text(
+                                text = "• Príloha $attachmentId",
+                                style = MaterialTheme.typography.bodyMedium
+                            )
+                        }
+                    }
 
                     Spacer(modifier = Modifier.height(16.dp))
 
@@ -161,4 +316,31 @@ fun EditSemPracaScreen(
             }
         }
     }
+}
+
+private fun formatDate(timestamp: Long): String {
+    val sdf = java.text.SimpleDateFormat("dd.MM.yyyy", java.util.Locale.getDefault())
+    return sdf.format(java.util.Date(timestamp))
+}
+
+private fun showDatePicker(
+    context: Context,
+    onDateSelected: (Long) -> Unit
+) {
+    val calendar = Calendar.getInstance()
+    val year = calendar.get(Calendar.YEAR)
+    val month = calendar.get(Calendar.MONTH)
+    val day = calendar.get(Calendar.DAY_OF_MONTH)
+
+    DatePickerDialog(
+        context,
+        { _, selectedYear, selectedMonth, selectedDay ->
+            val selectedCalendar = Calendar.getInstance()
+            selectedCalendar.set(selectedYear, selectedMonth, selectedDay)
+            onDateSelected(selectedCalendar.timeInMillis)
+        },
+        year,
+        month,
+        day
+    ).show()
 }
