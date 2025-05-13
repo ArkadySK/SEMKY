@@ -7,8 +7,6 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -22,13 +20,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.semky.data.model.SemPraca
 import com.example.semky.viewmodel.SemPracaViewModel
 import java.util.*
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditSemPracaScreen(
     viewModel: SemPracaViewModel,
@@ -55,36 +53,43 @@ fun EditSemPracaScreen(
             .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(
-            text = when {
-                existingPraca == null -> "Nová semestrálna práca"
-                isEditing -> "Úprava semestrálnej práce"
-                else -> existingPraca.name
-            },
-            style = MaterialTheme.typography.headlineMedium,
-            modifier = Modifier.padding(bottom = 16.dp)
-        )
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(color = MaterialTheme.colorScheme.primary)
+        ) {
+            Text(
+                text = when {
+                    existingPraca == null -> "Nová semestrálna práca"
+                    isEditing -> "Úprava semestrálnej práce"
+                    else -> existingPraca.name
+                },
+                style = MaterialTheme.typography.headlineMedium,
+                color = MaterialTheme.colorScheme.background,
+                modifier = Modifier.padding(16.dp)
+            )
+        }
+        Spacer(modifier = Modifier.height(16.dp))
 
         // Edit / Add mod 
         if (isEditing) {
-            OutlinedTextField(
-                value = name,
-                onValueChange = { name = it },
-                label = { Text("Názov") },
-                modifier = Modifier.fillMaxWidth()
-            )
+            Card(modifier = Modifier.fillMaxWidth()) {
+                OutlinedTextField(
+                    value = name,
+                    onValueChange = { name = it },
+                    label = { Text("Názov") },
+                    modifier = Modifier.fillMaxWidth().padding(16.dp)
+                )
 
+                OutlinedTextField(
+                    value = description,
+                    onValueChange = { description = it },
+                    label = { Text("Informácie") },
+                    modifier = Modifier.fillMaxWidth().padding(16.dp),
+                    minLines = 3
+                )
+            }
             Spacer(modifier = Modifier.height(16.dp))
-
-            OutlinedTextField(
-                value = description,
-                onValueChange = { description = it },
-                label = { Text("Informácie") },
-                modifier = Modifier.fillMaxWidth(),
-                minLines = 3
-            )
-
-            Spacer(modifier = Modifier.height(24.dp))
 
             // Deadlines section
             Card(
@@ -121,9 +126,11 @@ fun EditSemPracaScreen(
                         }
                     }
                     Button(
-                        onClick = { showDatePicker(context) { timestamp -> 
-                            deadlines = deadlines + timestamp
-                        }},
+                        onClick = {
+                            showDatePicker(context) { timestamp ->
+                                deadlines = deadlines + timestamp
+                            }
+                        },
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Icon(
@@ -226,7 +233,9 @@ fun EditSemPracaScreen(
         } else {
             // View mod
             Card(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight()
             ) {
                 Column(
                     modifier = Modifier.padding(16.dp)
@@ -321,7 +330,7 @@ fun EditSemPracaScreen(
                     Text("Upraviť")
                 }
             }
-            
+
             Button(
                 onClick = onNavigateBack,
                 modifier = Modifier.weight(1f)
@@ -377,37 +386,29 @@ fun AttachmentGallery(
     attachmentId: Long,
     viewModel: SemPracaViewModel,
     onDismiss: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier.fillMaxWidth()
 ) {
     val context = LocalContext.current
     val file = viewModel.getAttachmentFile(attachmentId)
 
-    BasicAlertDialog(
+    Dialog(
         onDismissRequest = onDismiss,
-        modifier = modifier.background(MaterialTheme.colorScheme.background)
     ) {
         Column(
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+            Button(
+                onClick = onDismiss,
+                modifier = Modifier.padding(16.dp)
             ) {
-                Text(
-                    text = "Príloha",
-                    style = MaterialTheme.typography.titleMedium
+                Icon(
+                    imageVector = Icons.Default.Close,
+                    contentDescription = "Close"
                 )
-                IconButton(onClick = onDismiss) {
-                    Icon(
-                        imageVector = Icons.Default.Close,
-                        contentDescription = "Close"
-                    )
-                }
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(text = "Späť")
             }
-
-            Spacer(modifier = Modifier.height(16.dp))
 
             if (file != null) {
                 AsyncImage(
@@ -418,7 +419,7 @@ fun AttachmentGallery(
                     contentDescription = "Attachment",
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(300.dp),
+                        .fillMaxHeight(),
                     contentScale = ContentScale.Fit
                 )
             } else {
@@ -427,6 +428,7 @@ fun AttachmentGallery(
                     style = MaterialTheme.typography.bodyMedium
                 )
             }
+
         }
     }
 }
