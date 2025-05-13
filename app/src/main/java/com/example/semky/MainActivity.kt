@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -62,7 +63,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             SEMKYTheme {
                 var selItemIndex by remember { mutableStateOf(0) }
-                
+
                 val navItems = listOf(
                     NavItem(
                         id = 0,
@@ -85,14 +86,19 @@ class MainActivity : ComponentActivity() {
                 )
 
                 val viewModel = remember {
-                    SemPracaViewModelFactory(repository, applicationContext).create(SemPracaViewModel::class.java)
+                    SemPracaViewModelFactory(repository, applicationContext).create(
+                        SemPracaViewModel::class.java
+                    )
                 }
 
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),
                     topBar = {
                         TopAppBar(
-                            title = { Text(text = navItems[selItemIndex].title) },
+                            title = {
+                                Text(
+                                    color = MaterialTheme.colorScheme.onPrimary,
+                                    text = navItems[selItemIndex].title) },
                             colors = TopAppBarDefaults.topAppBarColors(
                                 containerColor = MaterialTheme.colorScheme.primaryContainer,
                                 titleContentColor = MaterialTheme.colorScheme.primary,
@@ -134,6 +140,7 @@ class MainActivity : ComponentActivity() {
                                 viewModel = viewModel
                             )
                         }
+
                         1 -> BodyScreen(modifier = Modifier.padding(innerPadding))
                         else -> KalendarScreen(modifier = Modifier.padding(innerPadding))
                     }

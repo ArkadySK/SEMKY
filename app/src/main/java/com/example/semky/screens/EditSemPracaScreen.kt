@@ -65,7 +65,7 @@ fun EditSemPracaScreen(
                     else -> existingPraca.name
                 },
                 style = MaterialTheme.typography.headlineMedium,
-                color = MaterialTheme.colorScheme.background,
+                color = MaterialTheme.colorScheme.onPrimary,
                 modifier = Modifier.padding(16.dp)
             )
         }
