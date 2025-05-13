@@ -9,11 +9,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.Button
@@ -31,9 +33,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.example.semky.data.model.SemPraca
 import com.example.semky.viewmodel.SemPracaViewModel
+import java.io.File
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -66,7 +73,9 @@ fun SemPraceScreen(
                         selectedPraca = praca
                         isEditMode = false
                         showDialog = true
-                    }
+                    },
+                    viewModel = viewModel,
+                    modifier = Modifier
                 )
             }
         }
@@ -109,6 +118,7 @@ fun PracaCard(
     praca: SemPraca,
     onDelete: () -> Unit,
     onClick: () -> Unit,
+    viewModel: SemPracaViewModel,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -166,12 +176,6 @@ fun PracaCard(
                     style = MaterialTheme.typography.titleSmall,
                     modifier = Modifier.padding(top = 8.dp)
                 )
-                praca.attachments.forEach { attachmentId ->
-                    Text(
-                        text = "• Príloha $attachmentId",
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                }
             }
         }
     }

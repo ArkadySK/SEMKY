@@ -5,6 +5,7 @@ import android.content.Context
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -12,13 +13,17 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.example.semky.data.model.SemPraca
 import com.example.semky.viewmodel.SemPracaViewModel
 import java.util.*
@@ -30,13 +35,17 @@ fun EditSemPracaScreen(
     existingPraca: SemPraca? = null,
     isEditMode: Boolean = false,
     onNavigateBack: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     var name by remember { mutableStateOf(existingPraca?.name ?: "") }
     var description by remember { mutableStateOf(existingPraca?.description ?: "") }
     var deadlines by remember { mutableStateOf(existingPraca?.deadlines ?: emptyList()) }
     var attachments by remember { mutableStateOf(existingPraca?.attachments ?: emptyList()) }
     var isEditing by remember { mutableStateOf(existingPraca == null || isEditMode) }
+
+    var selectedAttachment by remember { mutableStateOf<Long?>(null) }
+    var showAttachmentDialog by remember { mutableStateOf(false) }
+
     val context = LocalContext.current
 
     Column(
@@ -253,10 +262,15 @@ fun EditSemPracaScreen(
                             style = MaterialTheme.typography.titleMedium
                         )
                         attachments.forEach { attachmentId ->
-                            Text(
-                                text = "• Príloha $attachmentId",
-                                style = MaterialTheme.typography.bodyMedium
-                            )
+                            Button(
+                                onClick = {
+                                    selectedAttachment = attachmentId
+                                    showAttachmentDialog = true
+                                },
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                Text(text = "Príloha $attachmentId")
+                            }
                         }
                     }
 
@@ -316,6 +330,17 @@ fun EditSemPracaScreen(
             }
         }
     }
+
+    if (showAttachmentDialog && selectedAttachment != null) {
+        AttachmentGallery(
+            attachmentId = selectedAttachment!!,
+            viewModel = viewModel,
+            onDismiss = {
+                showAttachmentDialog = false
+                selectedAttachment = null
+            }
+        )
+    }
 }
 
 private fun formatDate(timestamp: Long): String {
@@ -343,4 +368,65 @@ private fun showDatePicker(
         month,
         day
     ).show()
+}
+
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun AttachmentGallery(
+    attachmentId: Long,
+    viewModel: SemPracaViewModel,
+    onDismiss: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val context = LocalContext.current
+    val file = viewModel.getAttachmentFile(attachmentId)
+
+    BasicAlertDialog(
+        onDismissRequest = onDismiss,
+        modifier = modifier.background(MaterialTheme.colorScheme.background)
+    ) {
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "Príloha",
+                    style = MaterialTheme.typography.titleMedium
+                )
+                IconButton(onClick = onDismiss) {
+                    Icon(
+                        imageVector = Icons.Default.Close,
+                        contentDescription = "Close"
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            if (file != null) {
+                AsyncImage(
+                    model = ImageRequest.Builder(context)
+                        .data(file)
+                        .crossfade(true)
+                        .build(),
+                    contentDescription = "Attachment",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(300.dp),
+                    contentScale = ContentScale.Fit
+                )
+            } else {
+                Text(
+                    text = "Príloha sa nenašla",
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            }
+        }
+    }
 }
