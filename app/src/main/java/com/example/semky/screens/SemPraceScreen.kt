@@ -12,9 +12,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -33,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.example.semky.data.model.SemPraca
 import com.example.semky.viewmodel.SemPracaViewModel
+import com.example.semky.screens.EditSemPracaScreen
 
 @Composable
 fun SemPraceScreen(
@@ -42,7 +41,6 @@ fun SemPraceScreen(
     val semPraceList by viewModel.semPrace.collectAsState()
     var selectedPraca by remember { mutableStateOf<SemPraca?>(null) }
     var showDialog by remember { mutableStateOf(false) }
-    var isEditMode by remember { mutableStateOf(false) }
 
     Column(
         modifier = modifier.fillMaxSize(),
@@ -62,29 +60,12 @@ fun SemPraceScreen(
                     onDelete = { viewModel.deletePraca(praca) },
                     onClick = { 
                         selectedPraca = praca
-                        isEditMode = false
                         showDialog = true
                     },
                     viewModel = viewModel,
                     modifier = Modifier
                 )
             }
-        }
-
-        Button(
-            onClick = { 
-                selectedPraca = null
-                isEditMode = true
-                showDialog = true
-            },
-            modifier = Modifier.padding(16.dp)
-        ) {
-            Icon(
-                imageVector = Icons.Default.Add,
-                contentDescription = "Add icon"
-            )
-            Spacer(modifier = Modifier.width(8.dp))
-            Text(text = "Pridať novú prácu")
         }
     }
 
@@ -95,7 +76,7 @@ fun SemPraceScreen(
             EditSemPracaScreen(
                 viewModel = viewModel,
                 existingPraca = selectedPraca,
-                isEditMode = isEditMode,
+                isEditMode = true,
                 onNavigateBack = { showDialog = false }
             )
         }
