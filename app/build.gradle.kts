@@ -41,9 +41,10 @@ android {
 }
 
 dependencies {
+    implementation(libs.firebase.crashlytics.buildtools)
+    // TODO: vyskusaj skonvertovat do noveho formatu
     //src: https://developer.android.com/training/data-storage/room#kts
     val room_version = "2.7.1"
-
     implementation("androidx.room:room-runtime:$room_version")
 
     // If this project uses any Kotlin source, use Kotlin Symbol Processing (KSP)
@@ -68,6 +69,7 @@ dependencies {
     // optional - Paging 3 Integration
     implementation("androidx.room:room-paging:$room_version")
 
+    implementation(libs.gson)
     implementation(libs.coil.compose)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

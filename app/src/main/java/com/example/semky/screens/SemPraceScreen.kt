@@ -76,7 +76,6 @@ fun SemPraceScreen(
             EditSemPracaScreen(
                 viewModel = viewModel,
                 existingPraca = selectedPraca,
-                isEditMode = true,
                 onNavigateBack = { showDialog = false }
             )
         }
@@ -134,7 +133,7 @@ fun PracaCard(
                 )
                 praca.deadlines.forEach { deadline ->
                     Text(
-                        text = "• ${formatDate(deadline)}",
+                        text = "• ${deadline.name}: ${formatDate(deadline.date)}",
                         style = MaterialTheme.typography.bodyMedium
                     )
                 }

@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.example.semky.data.model.Deadline
 import com.example.semky.data.model.SemPraca
 import com.example.semky.viewmodel.SemPracaViewModel
 import java.util.*
@@ -40,6 +41,7 @@ fun EditSemPracaScreen(
     var deadlines by remember { mutableStateOf(existingPraca?.deadlines ?: emptyList()) }
     var attachments by remember { mutableStateOf(existingPraca?.attachments ?: emptyList()) }
     var isEditing by remember { mutableStateOf(existingPraca == null || isEditMode) }
+    var newDeadlineName by remember { mutableStateOf("") }
 
     var selectedAttachment by remember { mutableStateOf<Long?>(null) }
     var showAttachmentDialog by remember { mutableStateOf(false) }
@@ -109,10 +111,16 @@ fun EditSemPracaScreen(
                             horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Text(
-                                text = formatDate(deadline),
-                                style = MaterialTheme.typography.bodyMedium
-                            )
+                            Column {
+                                Text(
+                                    text = deadline.name,
+                                    style = MaterialTheme.typography.bodyMedium
+                                )
+                                Text(
+                                    text = formatDate(deadline.date),
+                                    style = MaterialTheme.typography.bodySmall
+                                )
+                            }
                             IconButton(
                                 onClick = {
                                     deadlines = deadlines.filter { it != deadline }
@@ -125,13 +133,24 @@ fun EditSemPracaScreen(
                             }
                         }
                     }
+                    OutlinedTextField(
+                        value = newDeadlineName,
+                        onValueChange = { newDeadlineName = it },
+                        label = { Text("Názov termínu") },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
                     Button(
                         onClick = {
-                            showDatePicker(context) { timestamp ->
-                                deadlines = deadlines + timestamp
+                            if (newDeadlineName.isNotEmpty()) {
+                                showDatePicker(context) { timestamp ->
+                                    deadlines = deadlines + Deadline(date = timestamp, name = newDeadlineName)
+                                    newDeadlineName = ""
+                                }
                             }
                         },
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth(),
+                        enabled = newDeadlineName.isNotEmpty()
                     ) {
                         Icon(
                             imageVector = Icons.Default.Add,
@@ -258,7 +277,7 @@ fun EditSemPracaScreen(
                         )
                         deadlines.forEach { deadline ->
                             Text(
-                                text = "• ${formatDate(deadline)}",
+                                text = "• ${deadline.name}: ${formatDate(deadline.date)}",
                                 style = MaterialTheme.typography.bodyMedium
                             )
                         }

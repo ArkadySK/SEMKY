@@ -10,6 +10,6 @@ data class SemPraca(
     val name: String,
     val description: String,
     val isFinished: Boolean = false,
-    val deadlines: List<Long> = emptyList(),
+    val deadlines: List<Deadline> = emptyList<Deadline>(),
     val attachments: List<Long> = emptyList()
 )

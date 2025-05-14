@@ -1,12 +1,10 @@
 package com.example.semky.screens
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -15,13 +13,40 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun BodyScreen(modifier: Modifier = Modifier) {
     Column(
-        modifier = modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+        modifier = modifier.fillMaxSize()
     ) {
-        Text(text = "Zoznam bodov:", style = MaterialTheme.typography.bodyLarge)
-        Spacer(modifier = Modifier.height(8.dp))
-        Text(text = "1. 10 bodov", style = MaterialTheme.typography.bodyMedium)
-        Text(text = "2. 15 bodov", style = MaterialTheme.typography.bodyMedium)
+        // List of items
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(16.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            items(listOf(
+                "VAMZ semestrálka" to "11 b",
+                "VAMZ semestrálka" to "[WIP]",
+                "VAMZ semestrálka" to "0 b"
+            )) { (title, points) ->
+                Card(
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = title,
+                            style = MaterialTheme.typography.bodyLarge
+                        )
+                        Text(
+                            text = points,
+                            style = MaterialTheme.typography.bodyLarge
+                        )
+                    }
+                }
+            }
+        }
     }
 } 

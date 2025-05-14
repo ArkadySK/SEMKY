@@ -1,6 +1,7 @@
 [versions]
 agp = "8.8.2"
 coilCompose = "2.6.0"
+gson = "2.10.1"
 kotlin = "2.0.0"
 coreKtx = "1.16.0"
 junit = "4.13.2"
@@ -19,6 +20,7 @@ roomRuntimeAndroid = "2.7.1"
 roomRxjava2 = "2.7.1"
 roomRxjava3 = "2.7.1"
 roomTesting = "2.7.1"
+firebaseCrashlyticsBuildtools = "3.0.3"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -31,6 +33,7 @@ androidx-room-rxjava2 = { module = "androidx.room:room-rxjava2", version.ref = "
 androidx-room-rxjava3 = { module = "androidx.room:room-rxjava3", version.ref = "roomRxjava3" }
 androidx-room-testing = { module = "androidx.room:room-testing", version.ref = "roomTesting" }
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coilCompose" }
+gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
@@ -46,6 +49,7 @@ androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
 androidx-room-common-jvm = { group = "androidx.room", name = "room-common-jvm", version.ref = "roomCommonJvm" }
 androidx-room-runtime-android = { group = "androidx.room", name = "room-runtime-android", version.ref = "roomRuntimeAndroid" }
+firebase-crashlytics-buildtools = { group = "com.google.firebase", name = "firebase-crashlytics-buildtools", version.ref = "firebaseCrashlyticsBuildtools" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
