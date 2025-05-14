@@ -1,22 +1,16 @@
 package com.example.semky.data.repository
 
-import com.example.semky.data.dao.SemPracaBodyDao
+import com.example.semky.data.dao.SemPracaPointsDao
 import com.example.semky.data.model.SemPracaBody
 import kotlinx.coroutines.flow.Flow
 
-class SemPracaBodyRepository(private val semPracaBodyDao: SemPracaBodyDao) {
-    fun getAllBodiesBySemPracaId(semPracaId: Long): Flow<List<SemPracaBody>> = 
-        semPracaBodyDao.getAllBodiesBySemPracaId(semPracaId)
+class SemPracaPointsRepository(private val semPracaPointsDao: SemPracaPointsDao) {
+    fun getAllPointsBySemPracaId(semPracaId: Long): Flow<List<SemPracaBody>> = 
+        semPracaPointsDao.getAllPointsBySemPracaId(semPracaId)
 
-    suspend fun getBodyById(id: Long): SemPracaBody? = 
-        semPracaBodyDao.getBodyById(id)
+    suspend fun insertPoints(points: SemPracaBody): Long = 
+        semPracaPointsDao.insertPoints(points)
 
-    suspend fun insertBody(body: SemPracaBody): Long = 
-        semPracaBodyDao.insertBody(body)
-
-    suspend fun updateBody(body: SemPracaBody) = 
-        semPracaBodyDao.updateBody(body)
-
-    suspend fun deleteBody(body: SemPracaBody) = 
-        semPracaBodyDao.deleteBody(body)
+    suspend fun deletePoints(points: SemPracaBody) = 
+        semPracaPointsDao.deletePoints(points)
 } 

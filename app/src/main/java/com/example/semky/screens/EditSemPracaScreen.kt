@@ -25,12 +25,14 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.semky.data.model.Deadline
 import com.example.semky.data.model.SemPraca
+import com.example.semky.viewmodel.SemPracaPointsViewModel
 import com.example.semky.viewmodel.SemPracaViewModel
 import java.util.*
 
 @Composable
 fun EditSemPracaScreen(
     viewModel: SemPracaViewModel,
+    pointsViewModel: SemPracaPointsViewModel,
     existingPraca: SemPraca? = null,
     isEditMode: Boolean = false,
     onNavigateBack: () -> Unit,
@@ -316,8 +318,11 @@ fun EditSemPracaScreen(
                         Button(
                             onClick = {
                                 existingPraca?.let {
-                                    viewModel.updatePraca(it.copy(isFinished = !it.isFinished))
-                                    // TODO: bodyViewmodel.calculatePoints(it.Id)
+                                    val updatedPraca = it.copy(isFinished = !it.isFinished)
+                                    viewModel.updatePraca(updatedPraca)
+                                    if (!it.isFinished) {
+                                        pointsViewModel.calculateSubmissionPoints(updatedPraca)
+                                    }
                                     onNavigateBack()
                                 }
                             },

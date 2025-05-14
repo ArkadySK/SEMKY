@@ -4,20 +4,16 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.BadgedBox
-import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -31,13 +27,13 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
@@ -47,8 +43,11 @@ import com.example.semky.screens.BodyScreen
 import com.example.semky.screens.KalendarScreen
 import com.example.semky.data.database.SemkyDatabase
 import com.example.semky.data.repository.SemPracaRepository
+import com.example.semky.data.repository.SemPracaPointsRepository
 import com.example.semky.viewmodel.SemPracaViewModel
 import com.example.semky.viewmodel.SemPracaViewModelFactory
+import com.example.semky.viewmodel.SemPracaPointsViewModel
+import com.example.semky.viewmodel.SemPracaPointsViewModelFactory
 import com.example.semky.screens.EditSemPracaScreen
 
 data class NavItem(
@@ -61,6 +60,7 @@ data class NavItem(
 class MainActivity : ComponentActivity() {
     private lateinit var database: SemkyDatabase
     private lateinit var repository: SemPracaRepository
+    private lateinit var pointsRepository: SemPracaPointsRepository
 
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -68,11 +68,12 @@ class MainActivity : ComponentActivity() {
 
         database = SemkyDatabase.getDatabase(applicationContext)
         repository = SemPracaRepository(database.semPracaDao())
+        pointsRepository = SemPracaPointsRepository(database.semPracaPointsDao())
 
         enableEdgeToEdge()
         setContent {
             SEMKYTheme {
-                var selItemIndex by remember { mutableStateOf(0) }
+                var selItemIndex by remember { mutableIntStateOf(0) }
                 var showAddDialog by remember { mutableStateOf(false) }
 
                 val navItems = listOf(
@@ -96,9 +97,15 @@ class MainActivity : ComponentActivity() {
                     )
                 )
 
-                val viewModel = remember {
+                val semPraceViewModel = remember {
                     SemPracaViewModelFactory(repository, applicationContext).create(
                         SemPracaViewModel::class.java
+                    )
+                }
+
+                val pointsViewModel = remember {
+                    SemPracaPointsViewModelFactory(pointsRepository).create(
+                        SemPracaPointsViewModel::class.java
                     )
                 }
 
@@ -135,7 +142,7 @@ class MainActivity : ComponentActivity() {
                         )
                     },
                     bottomBar = {
-                        NavigationBar() {
+                        NavigationBar {
                             for (navItem in navItems) {
                                 NavigationBarItem(
                                     selected = (navItem.id == selItemIndex),
@@ -166,10 +173,15 @@ class MainActivity : ComponentActivity() {
                         0 -> {
                             SemPraceScreen(
                                 modifier = Modifier.padding(innerPadding),
-                                viewModel = viewModel
+                                pointsViewModel = pointsViewModel,
+                                viewModel = semPraceViewModel
                             )
                         }
-                        1 -> BodyScreen(modifier = Modifier.padding(innerPadding))
+                        1 -> BodyScreen(
+                            modifier = Modifier.padding(innerPadding),
+                            viewModel = semPraceViewModel,
+                            pointsViewModel = pointsViewModel
+                        )
                         else -> KalendarScreen(modifier = Modifier.padding(innerPadding))
                     }
 
@@ -178,7 +190,8 @@ class MainActivity : ComponentActivity() {
                             onDismissRequest = { showAddDialog = false }
                         ) {
                             EditSemPracaScreen(
-                                viewModel = viewModel,
+                                viewModel = semPraceViewModel,
+                                pointsViewModel = pointsViewModel,
                                 existingPraca = null,
                                 isEditMode = true,
                                 onNavigateBack = { showAddDialog = false }
@@ -194,20 +207,5 @@ class MainActivity : ComponentActivity() {
 @Preview(showBackground = true)
 @Composable
 fun Preview() {
-    SEMKYTheme {
-//        val database = remember {
-//            val applicationContext = null
-//            SemkyDatabase.getDatabase(applicationContext)
-//        }
-//        // Initialize repository
-//        val repository = remember { SemPracaRepository(database.semPracaDao()) }
-//        // Initialize ViewModel
-//        val viewModel = remember {
-//            SemPracaViewModelFactory(repository).create(SemPracaViewModel::class.java)
-//        }
-//        SemPraceScreen(
-//            viewModel = viewModel,
-//            onAddClick = {}
-//        )
-    }
+
 }

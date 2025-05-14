@@ -8,7 +8,7 @@ val White = Color(0xFFFFFFFF)
 val Gray = Color(0xFFE0E0E0)
 val DarkGray = Color(0xFF666666)
 
-// Light Theme Colors
+// Light Theme
 val Primary = LightGreen
 val PrimaryContainer = LightGreen
 val OnPrimary = DarkGreen
@@ -16,7 +16,7 @@ val Background = White
 val Surface = White
 val OnSurface = DarkGray
 
-// Dark Theme Colors
+// Dark Theme
 val PrimaryDark = DarkGreen
 val PrimaryContainerDark = DarkGreen
 val OnPrimaryDark = White

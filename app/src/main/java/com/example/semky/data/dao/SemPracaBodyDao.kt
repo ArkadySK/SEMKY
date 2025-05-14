@@ -10,19 +10,13 @@ import com.example.semky.data.model.SemPracaBody
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-interface SemPracaBodyDao {
+interface SemPracaPointsDao {
     @Query("SELECT * FROM sem_praca_body WHERE semPracaId = :semPracaId")
-    fun getAllBodiesBySemPracaId(semPracaId: Long): Flow<List<SemPracaBody>>
-
-    @Query("SELECT * FROM sem_praca_body WHERE id = :id")
-    suspend fun getBodyById(id: Long): SemPracaBody?
+    fun getAllPointsBySemPracaId(semPracaId: Long): Flow<List<SemPracaBody>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertBody(body: SemPracaBody): Long
-
-    @Update
-    suspend fun updateBody(body: SemPracaBody)
+    suspend fun insertPoints(points: SemPracaBody): Long
 
     @Delete
-    suspend fun deleteBody(body: SemPracaBody)
+    suspend fun deletePoints(points: SemPracaBody)
 } 

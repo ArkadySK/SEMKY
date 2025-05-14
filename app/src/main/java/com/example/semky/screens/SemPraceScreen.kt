@@ -31,11 +31,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.example.semky.data.model.SemPraca
 import com.example.semky.viewmodel.SemPracaViewModel
-import com.example.semky.screens.EditSemPracaScreen
+import com.example.semky.viewmodel.SemPracaPointsViewModel
 
 @Composable
 fun SemPraceScreen(
     viewModel: SemPracaViewModel,
+    pointsViewModel: SemPracaPointsViewModel,
     modifier: Modifier = Modifier
 ) {
     val semPraceList by viewModel.semPrace.collectAsState()
@@ -62,7 +63,6 @@ fun SemPraceScreen(
                         selectedPraca = praca
                         showDialog = true
                     },
-                    viewModel = viewModel,
                     modifier = Modifier
                 )
             }
@@ -76,6 +76,7 @@ fun SemPraceScreen(
             EditSemPracaScreen(
                 viewModel = viewModel,
                 existingPraca = selectedPraca,
+                pointsViewModel = pointsViewModel,
                 onNavigateBack = { showDialog = false }
             )
         }
@@ -88,7 +89,6 @@ fun PracaCard(
     praca: SemPraca,
     onDelete: () -> Unit,
     onClick: () -> Unit,
-    viewModel: SemPracaViewModel,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -96,7 +96,7 @@ fun PracaCard(
         onClick = onClick
     ) {
         Column(
-            modifier = Modifier.padding(8.dp)
+            modifier = Modifier.padding(16.dp)
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -112,7 +112,7 @@ fun PracaCard(
                         Text(
                             text = "Dokončené",
                             style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.primary
+                            color = MaterialTheme.colorScheme.onPrimary
                         )
                     }
                 }
