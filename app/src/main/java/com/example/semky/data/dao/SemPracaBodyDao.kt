@@ -11,8 +11,8 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface SemPracaPointsDao {
-    @Query("SELECT * FROM sem_praca_body WHERE semPracaId = :semPracaId")
-    fun getAllPointsBySemPracaId(semPracaId: Long): Flow<List<SemPracaBody>>
+    @Query("SELECT * FROM sem_praca_body WHERE semPracaId = :semPracaId LIMIT 1")
+    suspend fun getPointsBySemPracaId(semPracaId: Long): SemPracaBody
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertPoints(points: SemPracaBody): Long

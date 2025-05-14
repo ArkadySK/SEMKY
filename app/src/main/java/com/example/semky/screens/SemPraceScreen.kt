@@ -58,8 +58,11 @@ fun SemPraceScreen(
             items(semPraceList) { praca ->
                 PracaCard(
                     praca = praca,
-                    onDelete = { viewModel.deletePraca(praca) },
-                    onClick = { 
+                    onDelete = {
+                        pointsViewModel.deletePoints(praca)
+                        viewModel.deletePraca(praca)
+                    },
+                    onClick = {
                         selectedPraca = praca
                         showDialog = true
                     },
@@ -123,7 +126,7 @@ fun PracaCard(
                     )
                 }
             }
-            
+
             if (praca.deadlines.isNotEmpty()) {
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
