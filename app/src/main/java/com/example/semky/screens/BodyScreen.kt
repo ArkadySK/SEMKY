@@ -78,10 +78,9 @@ fun BodyScreen(
                                     )
                                 }
                             }
-                            Divider(modifier = Modifier.padding(vertical = 8.dp))
+                            HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
                         }
-
-                        val totalPoints = points.sumOf { it.points }
+                        éval totalPoints = points.sumOf { it.points }
                         Text(
                             text = "Celkom: $totalPoints bodov",
                             style = MaterialTheme.typography.titleSmall,

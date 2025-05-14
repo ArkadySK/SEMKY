@@ -20,6 +20,14 @@ class SemPracaPointsViewModel(
 
     private var currentSemPracaId: Long = 0
 
+    fun getPoints(praca: SemPraca): SemPracaBody? {
+        var body: SemPracaBody? = null
+        viewModelScope.launch {
+            body = repository.getPointsBySemPracaId(praca.id)
+        }
+        return body
+    }
+
     fun deletePoints(praca: SemPraca) {
         viewModelScope.launch {
             repository.deleteBySemPracaId(praca.id)

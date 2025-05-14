@@ -26,10 +26,12 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -73,8 +75,8 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             SEMKYTheme {
-                var selItemIndex by remember { mutableIntStateOf(0) }
-                var showAddDialog by remember { mutableStateOf(false) }
+                var selItemIndex by rememberSaveable { mutableIntStateOf(0) }
+                var showAddDialog by rememberSaveable { mutableStateOf(false) }
 
                 val navItems = listOf(
                     NavItem(
@@ -109,6 +111,14 @@ class MainActivity : ComponentActivity() {
                     )
                 }
 
+                val finishedWorks by semPraceViewModel.semPrace.collectAsState()
+                var totalPoints = 0
+                finishedWorks.filter { it.isFinished }.forEach { praca ->
+                    val points = pointsViewModel.getPoints(praca)
+                    if (points != null)
+                        totalPoints += points.points
+                }
+
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),
                     topBar = {
@@ -125,7 +135,7 @@ class MainActivity : ComponentActivity() {
                                         onClick = { showAddDialog = true },
                                         modifier = Modifier
                                             .padding(end = 16.dp),
-                                            colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.background)
+                                        colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.background)
                                     ) {
                                         Icon(
                                             imageVector = Icons.Default.Add,
@@ -133,6 +143,15 @@ class MainActivity : ComponentActivity() {
                                             modifier = Modifier.size(24.dp)
                                         )
                                     }
+                                }
+                                else if(selItemIndex == 1) {
+                                    Text(
+                                        color = MaterialTheme.colorScheme.onPrimary,
+                                        text = "$totalPoints bodov",
+                                        modifier = Modifier
+                                            .padding(end = 16.dp),
+                                        style = MaterialTheme.typography.titleLarge
+                                    )
                                 }
                             },
                             colors = TopAppBarDefaults.topAppBarColors(
@@ -177,11 +196,13 @@ class MainActivity : ComponentActivity() {
                                 viewModel = semPraceViewModel
                             )
                         }
+
                         1 -> BodyScreen(
                             modifier = Modifier.padding(innerPadding),
                             viewModel = semPraceViewModel,
                             pointsViewModel = pointsViewModel
                         )
+
                         else -> KalendarScreen(modifier = Modifier.padding(innerPadding))
                     }
 
