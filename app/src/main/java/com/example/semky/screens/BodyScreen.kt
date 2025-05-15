@@ -25,21 +25,22 @@ fun BodyScreen(
     pointsViewModel: SemPracaPointsViewModel,
     modifier: Modifier = Modifier
 ) {
+    val allPoints by pointsViewModel.allPoints.collectAsState()
     val semPraceList by viewModel.semPrace.collectAsState()
 
     Column(
         modifier = modifier.fillMaxSize()
     ) {
         Spacer(modifier = Modifier.height(16.dp))
-        LazyColumn (
+        LazyColumn(
             modifier = Modifier
                 .weight(1f)
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            items(semPraceList.filter { it.isFinished }) { praca ->
-                var points by remember { mutableStateOf(emptyList<SemPracaBody>()) }
+            items(allPoints) { points ->
+                val semPraca = semPraceList.find { it.id == points.semPracaId }
 
                 Card(
                     modifier = Modifier.fillMaxWidth()
@@ -53,39 +54,24 @@ fun BodyScreen(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                text = praca.name,
+                                text = semPraca?.name ?: "Neznáma práca",
                                 style = MaterialTheme.typography.titleMedium
                             )
                         }
 
                         Spacer(modifier = Modifier.height(8.dp))
 
-                        points.forEach { points ->
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Column(modifier = Modifier.weight(1f)) {
-                                    Text(
-                                        text = points.description,
-                                        style = MaterialTheme.typography.bodyMedium
-                                    )
-                                    Text(
-                                        text = "${points.points} bodov",
-                                        style = MaterialTheme.typography.bodySmall,
-                                        color = MaterialTheme.colorScheme.onPrimary
-                                    )
-                                }
-                            }
-                            HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+                        Column(modifier = Modifier.fillMaxWidth()) {
+                            Text(
+                                text = points.description,
+                                style = MaterialTheme.typography.bodyMedium
+                            )
+                            Text(
+                                text = "${points.points} bodov",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onPrimary
+                            )
                         }
-                        éval totalPoints = points.sumOf { it.points }
-                        Text(
-                            text = "Celkom: $totalPoints bodov",
-                            style = MaterialTheme.typography.titleSmall,
-                            color = MaterialTheme.colorScheme.onPrimary
-                        )
                     }
                 }
             }

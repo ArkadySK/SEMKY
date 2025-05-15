@@ -18,21 +18,12 @@ class SemPracaPointsViewModel(
     private val repository: SemPracaPointsRepository
 ) : ViewModel() {
 
-    private var currentSemPracaId: Long = 0
-
-    fun getPoints(praca: SemPraca): SemPracaBody? {
-        var body: SemPracaBody? = null
-        viewModelScope.launch {
-            body = repository.getPointsBySemPracaId(praca.id)
-        }
-        return body
-    }
-
-    fun deletePoints(praca: SemPraca) {
-        viewModelScope.launch {
-            repository.deleteBySemPracaId(praca.id)
-        }
-    }
+    val allPoints: StateFlow<List<SemPracaBody>> = repository.getAllPoints()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = emptyList()
+        )
 
     fun calculateSubmissionPoints(praca: SemPraca) {
         // Očakavame ze posledný deadline bude aj termín odovzdania / dokončenia
@@ -49,11 +40,9 @@ class SemPracaPointsViewModel(
             daysDifference > 0 -> {
                 -min(9, daysDifference)
             }
-
             daysDifference <= 0 -> {
                 min(20, abs(daysDifference) * 2)
             }
-
             else -> 0
         }
 
@@ -73,6 +62,12 @@ class SemPracaPointsViewModel(
                     points = totalPoints
                 )
             )
+        }
+    }
+
+    fun deletePoints(praca: SemPraca) {
+        viewModelScope.launch {
+            repository.deleteBySemPracaId(praca.id)
         }
     }
 }

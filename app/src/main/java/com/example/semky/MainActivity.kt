@@ -111,13 +111,8 @@ class MainActivity : ComponentActivity() {
                     )
                 }
 
-                val finishedWorks by semPraceViewModel.semPrace.collectAsState()
-                var totalPoints = 0
-                finishedWorks.filter { it.isFinished }.forEach { praca ->
-                    val points = pointsViewModel.getPoints(praca)
-                    if (points != null)
-                        totalPoints += points.points
-                }
+                val allPoints by pointsViewModel.allPoints.collectAsState()
+                val totalPoints = allPoints.sumOf { it.points }
 
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),

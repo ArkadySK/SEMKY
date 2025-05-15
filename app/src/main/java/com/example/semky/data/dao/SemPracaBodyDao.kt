@@ -14,6 +14,9 @@ interface SemPracaPointsDao {
     @Query("SELECT * FROM sem_praca_body WHERE semPracaId = :semPracaId LIMIT 1")
     suspend fun getPointsBySemPracaId(semPracaId: Long): SemPracaBody
 
+    @Query("SELECT * FROM sem_praca_body")
+    fun getAllPoints(): Flow<List<SemPracaBody>>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertPoints(points: SemPracaBody): Long
 
