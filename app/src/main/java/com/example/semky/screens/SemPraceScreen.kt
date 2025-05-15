@@ -23,7 +23,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -40,8 +40,12 @@ fun SemPraceScreen(
     modifier: Modifier = Modifier
 ) {
     val semPraceList by viewModel.semPrace.collectAsState()
-    var selectedPraca by remember { mutableStateOf<SemPraca?>(null) }
-    var showDialog by remember { mutableStateOf(false) }
+    var selectedPracaId by rememberSaveable { mutableStateOf<Long?>(null) }
+    var showDialog by rememberSaveable { mutableStateOf(false) }
+
+    val selectedPraca = selectedPracaId?.let { id ->
+        semPraceList.find { it.id == id }
+    }
 
     Column(
         modifier = modifier.fillMaxSize(),
@@ -63,7 +67,7 @@ fun SemPraceScreen(
                         viewModel.deletePraca(praca)
                     },
                     onClick = {
-                        selectedPraca = praca
+                        selectedPracaId = praca.id
                         showDialog = true
                     },
                     modifier = Modifier
@@ -74,13 +78,19 @@ fun SemPraceScreen(
 
     if (showDialog) {
         Dialog(
-            onDismissRequest = { showDialog = false }
+            onDismissRequest = { 
+                showDialog = false
+                selectedPracaId = null
+            }
         ) {
             EditSemPracaScreen(
                 viewModel = viewModel,
                 existingPraca = selectedPraca,
                 pointsViewModel = pointsViewModel,
-                onNavigateBack = { showDialog = false }
+                onNavigateBack = { 
+                    showDialog = false
+                    selectedPracaId = null
+                }
             )
         }
     }

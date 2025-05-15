@@ -15,6 +15,7 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -38,15 +39,15 @@ fun EditSemPracaScreen(
     onNavigateBack: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    var name by remember { mutableStateOf(existingPraca?.name ?: "") }
-    var description by remember { mutableStateOf(existingPraca?.description ?: "") }
-    var deadlines by remember { mutableStateOf(existingPraca?.deadlines ?: emptyList()) }
-    var attachments by remember { mutableStateOf(existingPraca?.attachments ?: emptyList()) }
-    var isEditing by remember { mutableStateOf(existingPraca == null || isEditMode) }
-    var newDeadlineName by remember { mutableStateOf("") }
+    var name by rememberSaveable { mutableStateOf(existingPraca?.name ?: "") }
+    var description by rememberSaveable { mutableStateOf(existingPraca?.description ?: "") }
+    var deadlines by rememberSaveable { mutableStateOf(existingPraca?.deadlines ?: emptyList()) }
+    var attachments by rememberSaveable { mutableStateOf(existingPraca?.attachments ?: emptyList()) }
+    var isEditing by rememberSaveable { mutableStateOf(existingPraca == null || isEditMode) }
+    var newDeadlineName by rememberSaveable { mutableStateOf("") }
 
-    var selectedAttachment by remember { mutableStateOf<Long?>(null) }
-    var showAttachmentDialog by remember { mutableStateOf(false) }
+    var selectedAttachment by rememberSaveable { mutableStateOf<Long?>(null) }
+    var showAttachmentDialog by rememberSaveable { mutableStateOf(false) }
 
     val context = LocalContext.current
 
@@ -346,7 +347,7 @@ fun EditSemPracaScreen(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            if (!isEditing && existingPraca != null) {
+            if (!isEditing && existingPraca != null && !existingPraca.isFinished) {
                 Button(
                     onClick = { isEditing = true },
                     modifier = Modifier.weight(1f)
