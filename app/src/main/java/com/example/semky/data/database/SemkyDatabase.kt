@@ -13,7 +13,7 @@ import com.example.semky.data.model.SemPracaBody
 
 @Database(
     entities = [SemPraca::class, SemPracaBody::class],
-    version = 8, exportSchema = false
+    version = 9, exportSchema = false
 )
 @TypeConverters(Converters::class)
 abstract class SemkyDatabase : RoomDatabase() {
@@ -31,9 +31,9 @@ abstract class SemkyDatabase : RoomDatabase() {
                     SemkyDatabase::class.java,
                     "semky_database"
                 )
-                .fallbackToDestructiveMigration()
-                .build()
-                .also { Instance = it }
+                    .fallbackToDestructiveMigration(false)
+                    .build()
+                    .also { Instance = it }
             }
         }
     }

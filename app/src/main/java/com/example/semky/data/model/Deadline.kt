@@ -1,7 +1,9 @@
 package com.example.semky.data.model
 
-class Deadline(
-    val date: Long,
+import java.util.Date
+
+data class Deadline(
+    val date: Date,
     val name: String
 ) {
 }

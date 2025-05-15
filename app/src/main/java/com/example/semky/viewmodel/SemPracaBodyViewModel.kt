@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import java.util.Date
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
@@ -31,8 +32,8 @@ class SemPracaPointsViewModel(
         if (earliestDeadline == null) return
 
         // daysDifference: záporné - skôr, kladné neskôr
-        val daysDifference =
-            ((System.currentTimeMillis() - earliestDeadline) / (24 * 60 * 60 * 1000)).toInt()
+        val now = Date()
+        val daysDifference = ((now.time - earliestDeadline.time) / (24 * 60 * 60 * 1000)).toInt()
 
         // Za každý deň oneskorenia sa mu strhne jeden bod
         // Za každý deň, v prípade že odovzdal skôr, dostane 2 extra body

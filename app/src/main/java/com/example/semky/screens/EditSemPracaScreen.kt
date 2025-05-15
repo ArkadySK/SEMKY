@@ -28,7 +28,10 @@ import com.example.semky.data.model.Deadline
 import com.example.semky.data.model.SemPraca
 import com.example.semky.viewmodel.SemPracaPointsViewModel
 import com.example.semky.viewmodel.SemPracaViewModel
-import java.util.*
+import java.util.Date
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 
 @Composable
 fun EditSemPracaScreen(
@@ -377,14 +380,14 @@ fun EditSemPracaScreen(
     }
 }
 
-private fun formatDate(timestamp: Long): String {
-    val sdf = java.text.SimpleDateFormat("dd.MM.yyyy", java.util.Locale.getDefault())
-    return sdf.format(java.util.Date(timestamp))
+private fun formatDate(date: Date): String {
+    val sdf = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
+    return sdf.format(date)
 }
 
 private fun showDatePicker(
     context: Context,
-    onDateSelected: (Long) -> Unit
+    onDateSelected: (Date) -> Unit
 ) {
     val calendar = Calendar.getInstance()
     val year = calendar.get(Calendar.YEAR)
@@ -396,7 +399,7 @@ private fun showDatePicker(
         { _, selectedYear, selectedMonth, selectedDay ->
             val selectedCalendar = Calendar.getInstance()
             selectedCalendar.set(selectedYear, selectedMonth, selectedDay)
-            onDateSelected(selectedCalendar.timeInMillis)
+            onDateSelected(selectedCalendar.time)
         },
         year,
         month,

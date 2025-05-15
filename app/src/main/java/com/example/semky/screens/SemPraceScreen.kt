@@ -32,6 +32,9 @@ import androidx.compose.ui.window.Dialog
 import com.example.semky.data.model.SemPraca
 import com.example.semky.viewmodel.SemPracaViewModel
 import com.example.semky.viewmodel.SemPracaPointsViewModel
+import java.util.Date
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 @Composable
 fun SemPraceScreen(
@@ -164,7 +167,7 @@ fun PracaCard(
     }
 }
 
-private fun formatDate(timestamp: Long): String {
-    val sdf = java.text.SimpleDateFormat("dd.MM.yyyy", java.util.Locale.getDefault())
-    return sdf.format(java.util.Date(timestamp))
+private fun formatDate(date: Date): String {
+    val sdf = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
+    return sdf.format(date)
 } 
