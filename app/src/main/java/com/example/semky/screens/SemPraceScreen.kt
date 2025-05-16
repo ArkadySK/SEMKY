@@ -48,7 +48,6 @@ fun SemPraceScreen(
     val semPraceList by viewModel.semPrace.collectAsState()
     var selectedPracaId by rememberSaveable { mutableStateOf<Long?>(null) }
     var showDialog by rememberSaveable { mutableStateOf(false) }
-    val deadlines by deadlineViewModel.getAllByPracaId(selectedPracaId).collectAsState()
     val selectedPraca = selectedPracaId?.let { id ->
         semPraceList.find { it.id == id }
     }
@@ -68,7 +67,6 @@ fun SemPraceScreen(
             items(semPraceList) { praca ->
                 PracaCard(
                     praca = praca,
-                    deadlines = deadlines,
                     onDelete = {
                         pointsViewModel.deletePoints(praca)
                         viewModel.deletePraca(praca)
@@ -92,7 +90,6 @@ fun SemPraceScreen(
         ) {
             EditSemPracaScreen(
                 viewModel = viewModel,
-                deadlines = deadlines,
                 existingPraca = selectedPraca,
                 pointsViewModel = pointsViewModel,
                 deadlineViewModel = deadlineViewModel,
@@ -109,7 +106,6 @@ fun SemPraceScreen(
 @Composable
 fun PracaCard(
     praca: SemPraca,
-    deadlines: List<Deadline>,
     onDelete: () -> Unit,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
@@ -147,20 +143,21 @@ fun PracaCard(
                 }
             }
 
-            if (deadlines.count() > 0) {
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    text = "Termíny:",
-                    style = MaterialTheme.typography.titleSmall,
-                    modifier = Modifier.padding(top = 8.dp)
-                )
-                deadlines.forEach { deadline ->
-                    Text(
-                        text = "• ${deadline.name}: ${formatDate(deadline.date)}",
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                }
-            }
+            // TODO: toto sa bude zobrazovat iba vnutri dialogu
+//            if (deadlines.count() > 0) {
+//                Spacer(modifier = Modifier.height(8.dp))
+//                Text(
+//                    text = "Termíny:",
+//                    style = MaterialTheme.typography.titleSmall,
+//                    modifier = Modifier.padding(top = 8.dp)
+//                )
+//                deadlines.forEach { deadline ->
+//                    Text(
+//                        text = "• ${deadline.name}: ${formatDate(deadline.date)}",
+//                        style = MaterialTheme.typography.bodyMedium
+//                    )
+//                }
+//            }
 
             if (praca.attachments.isNotEmpty()) {
                 Spacer(modifier = Modifier.height(8.dp))

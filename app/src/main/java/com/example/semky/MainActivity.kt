@@ -223,7 +223,6 @@ class MainActivity : ComponentActivity() {
                                 deadlineViewModel = deadlineViewModel,
                                 existingPraca = null,
                                 isEditMode = true,
-                                deadlines = emptyList(),
                                 onNavigateBack = { showAddDialog = false }
                             )
                         }

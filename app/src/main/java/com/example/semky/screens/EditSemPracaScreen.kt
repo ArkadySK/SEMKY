@@ -38,7 +38,6 @@ import java.util.Locale
 fun EditSemPracaScreen(
     viewModel: SemPracaViewModel,
     pointsViewModel: SemPracaPointsViewModel,
-    deadlines: List<Deadline>,
     deadlineViewModel: DeadlineViewModel,
     existingPraca: SemPraca? = null,
     isEditMode: Boolean = false,
@@ -47,10 +46,13 @@ fun EditSemPracaScreen(
 ) {
     var name by rememberSaveable { mutableStateOf(existingPraca?.name ?: "") }
     var description by rememberSaveable { mutableStateOf(existingPraca?.description ?: "") }
-    val deadlines by rememberSaveable { mutableStateOf(deadlines?: emptyList<Deadline>()) }
+    val deadlinesDb by deadlineViewModel.getAllByPracaId(existingPraca?.id).collectAsState() // originalne data z db, menia sa po ulozeni :)
     var attachments by rememberSaveable {mutableStateOf(existingPraca?.attachments ?: emptyList()) }
     var isEditing by rememberSaveable { mutableStateOf(existingPraca == null || isEditMode) }
     var newDeadlineName by rememberSaveable { mutableStateOf("") }
+    var newDeadlineDate by rememberSaveable { mutableStateOf<Date?>(null) }
+
+    var deadlines by rememberSaveable { mutableStateOf(deadlinesDb?: emptyList<Deadline>()) }
 
     var selectedAttachment by rememberSaveable { mutableStateOf<Long?>(null) }
     var showAttachmentDialog by rememberSaveable { mutableStateOf(false) }
@@ -136,7 +138,7 @@ fun EditSemPracaScreen(
                             }
                             IconButton(
                                 onClick = {
-                                    //deadlines = deadlines.filter { it != deadline } //TODO: fix
+                                    deadlines = deadlines.filter { it != deadline }
                                 }
                             ) {
                                 Icon(
@@ -155,18 +157,18 @@ fun EditSemPracaScreen(
                     Spacer(modifier = Modifier.height(8.dp))
                     Button(
                         onClick = {
-                            if (newDeadlineName.isNotEmpty()) {
-                                showDatePicker(context) { timestamp ->
-                                    if (existingPraca != null) {
-                                        var newDeadline = Deadline(
-                                            id = 0,
-                                            semPracaId = existingPraca.id,
-                                            date = timestamp,
-                                            name = newDeadlineName
-                                        );
-                                        deadlineViewModel.addDeadline(newDeadline)
-                                        newDeadlineName = ""
-                                    }
+                            showDatePicker(context) { timestamp ->
+                                newDeadlineDate = timestamp
+                                if (newDeadlineName.isNotEmpty() && newDeadlineDate != null) {
+                                    val newDeadline = Deadline(
+                                        id = 0,
+                                        semPracaId = existingPraca?.id ?: -1L, // temp id, will be replaced on save
+                                        date = newDeadlineDate!!,
+                                        name = newDeadlineName
+                                    )
+                                    deadlines = deadlines + newDeadline
+                                    newDeadlineName = ""
+                                    newDeadlineDate = null
                                 }
                             }
                         },
@@ -253,6 +255,11 @@ fun EditSemPracaScreen(
                             attachments = attachments
                         )
                         viewModel.addPraca(novaPraca)
+                        // uloz nove terminy s novym id
+                        deadlines.forEach { deadline ->
+                            val toSave = deadline.copy(semPracaId = novaPraca.id)
+                            deadlineViewModel.addDeadline(toSave)
+                        }
                     } else {
                         val updatedPraca = existingPraca.copy(
                             name = name,
@@ -260,6 +267,12 @@ fun EditSemPracaScreen(
                             attachments = attachments
                         )
                         viewModel.updatePraca(updatedPraca)
+                        // Odstran a uloz nove terminy
+                        deadlinesDb.forEach { deadlineViewModel.deleteDeadline(it) }
+                        deadlines.forEach { deadline ->
+                            val toSave = deadline.copy(semPracaId = existingPraca.id)
+                            deadlineViewModel.addDeadline(toSave)
+                        }
                     }
                     onNavigateBack()
                 },
@@ -288,13 +301,13 @@ fun EditSemPracaScreen(
                         style = MaterialTheme.typography.bodyMedium
                     )
 
-                    if (deadlines.isNotEmpty()) {
+                    if (deadlinesDb.isNotEmpty()) {
                         Spacer(modifier = Modifier.height(16.dp))
                         Text(
                             text = "Termíny:",
                             style = MaterialTheme.typography.titleMedium
                         )
-                        deadlines.forEach { deadline ->
+                        deadlinesDb.forEach { deadline ->
                             Text(
                                 text = "• ${deadline.name}: ${formatDate(deadline.date)}",
                                 style = MaterialTheme.typography.bodyMedium
