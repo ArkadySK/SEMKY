@@ -44,6 +44,7 @@ import com.example.semky.screens.SemPraceScreen
 import com.example.semky.screens.BodyScreen
 import com.example.semky.screens.KalendarScreen
 import com.example.semky.data.database.SemkyDatabase
+import com.example.semky.data.repository.DeadlineRepository
 import com.example.semky.data.repository.SemPracaRepository
 import com.example.semky.data.repository.SemPracaPointsRepository
 import com.example.semky.viewmodel.SemPracaViewModel
@@ -51,6 +52,8 @@ import com.example.semky.viewmodel.SemPracaViewModelFactory
 import com.example.semky.viewmodel.SemPracaPointsViewModel
 import com.example.semky.viewmodel.SemPracaPointsViewModelFactory
 import com.example.semky.screens.EditSemPracaScreen
+import com.example.semky.viewmodel.DeadlineViewModel
+import com.example.semky.viewmodel.DeadlineViewModelFactory
 
 data class NavItem(
     var id: Int,
@@ -63,6 +66,7 @@ class MainActivity : ComponentActivity() {
     private lateinit var database: SemkyDatabase
     private lateinit var repository: SemPracaRepository
     private lateinit var pointsRepository: SemPracaPointsRepository
+    private lateinit var deadlineRepository: DeadlineRepository
 
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -71,6 +75,7 @@ class MainActivity : ComponentActivity() {
         database = SemkyDatabase.getDatabase(applicationContext)
         repository = SemPracaRepository(database.semPracaDao())
         pointsRepository = SemPracaPointsRepository(database.semPracaPointsDao())
+        deadlineRepository = DeadlineRepository(database.deadlineDao())
 
         enableEdgeToEdge()
         setContent {
@@ -106,8 +111,14 @@ class MainActivity : ComponentActivity() {
                 }
 
                 val pointsViewModel = remember {
-                    SemPracaPointsViewModelFactory(pointsRepository).create(
+                    SemPracaPointsViewModelFactory(pointsRepository, deadlineRepository).create(
                         SemPracaPointsViewModel::class.java
+                    )
+                }
+
+                val deadlineViewModel = remember {
+                    DeadlineViewModelFactory(deadlineRepository, applicationContext).create(
+                        DeadlineViewModel::class.java
                     )
                 }
 
@@ -188,7 +199,8 @@ class MainActivity : ComponentActivity() {
                             SemPraceScreen(
                                 modifier = Modifier.padding(innerPadding),
                                 pointsViewModel = pointsViewModel,
-                                viewModel = semPraceViewModel
+                                viewModel = semPraceViewModel,
+                                deadlineViewModel = deadlineViewModel
                             )
                         }
 
@@ -208,8 +220,10 @@ class MainActivity : ComponentActivity() {
                             EditSemPracaScreen(
                                 viewModel = semPraceViewModel,
                                 pointsViewModel = pointsViewModel,
+                                deadlineViewModel = deadlineViewModel,
                                 existingPraca = null,
                                 isEditMode = true,
+                                deadlines = emptyList(),
                                 onNavigateBack = { showAddDialog = false }
                             )
                         }

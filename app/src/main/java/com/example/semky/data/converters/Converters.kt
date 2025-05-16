@@ -21,18 +21,6 @@ class Converters {
     }
 
     @TypeConverter
-    fun fromDeadlineList(value: List<Deadline>): String {
-        return gson.toJson(value)
-    }
-
-    @TypeConverter
-    fun toDeadlineList(value: String): List<Deadline> {
-        if (value.isEmpty()) return emptyList()
-        val listType = object : TypeToken<List<Deadline>>() {}.type
-        return gson.fromJson(value, listType)
-    }
-
-    @TypeConverter
     fun fromDate(date: Date): Long {
         return date.time
     }

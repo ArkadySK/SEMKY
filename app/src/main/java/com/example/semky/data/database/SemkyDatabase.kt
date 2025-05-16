@@ -6,19 +6,22 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.example.semky.data.converters.Converters
+import com.example.semky.data.dao.DeadlineDao
 import com.example.semky.data.dao.SemPracaDao
 import com.example.semky.data.dao.SemPracaPointsDao
+import com.example.semky.data.model.Deadline
 import com.example.semky.data.model.SemPraca
 import com.example.semky.data.model.SemPracaBody
 
 @Database(
-    entities = [SemPraca::class, SemPracaBody::class],
-    version = 9, exportSchema = false
+    entities = [SemPraca::class, SemPracaBody::class, Deadline::class],
+    version = 11, exportSchema = false
 )
 @TypeConverters(Converters::class)
 abstract class SemkyDatabase : RoomDatabase() {
     abstract fun semPracaDao(): SemPracaDao
     abstract fun semPracaPointsDao(): SemPracaPointsDao
+    abstract fun deadlineDao(): DeadlineDao
 
     companion object {
         @Volatile

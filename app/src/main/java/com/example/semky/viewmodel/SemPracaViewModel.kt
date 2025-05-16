@@ -47,10 +47,6 @@ class SemPracaViewModel(
         }
     }
 
-    suspend fun getPracaById(id: Long): SemPraca? {
-        return repository.getPracaById(id)
-    }
-
     fun addAttachment(uri: Uri): Long {
         return fileManager.saveAttachment(uri)
     }

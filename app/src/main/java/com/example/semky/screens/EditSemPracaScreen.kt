@@ -26,6 +26,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.semky.data.model.Deadline
 import com.example.semky.data.model.SemPraca
+import com.example.semky.viewmodel.DeadlineViewModel
 import com.example.semky.viewmodel.SemPracaPointsViewModel
 import com.example.semky.viewmodel.SemPracaViewModel
 import java.util.Date
@@ -37,15 +38,17 @@ import java.util.Locale
 fun EditSemPracaScreen(
     viewModel: SemPracaViewModel,
     pointsViewModel: SemPracaPointsViewModel,
+    deadlines: List<Deadline>,
+    deadlineViewModel: DeadlineViewModel,
     existingPraca: SemPraca? = null,
     isEditMode: Boolean = false,
     onNavigateBack: () -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     var name by rememberSaveable { mutableStateOf(existingPraca?.name ?: "") }
     var description by rememberSaveable { mutableStateOf(existingPraca?.description ?: "") }
-    var deadlines by rememberSaveable { mutableStateOf(existingPraca?.deadlines ?: emptyList()) }
-    var attachments by rememberSaveable { mutableStateOf(existingPraca?.attachments ?: emptyList()) }
+    val deadlines by rememberSaveable { mutableStateOf(deadlines?: emptyList<Deadline>()) }
+    var attachments by rememberSaveable {mutableStateOf(existingPraca?.attachments ?: emptyList()) }
     var isEditing by rememberSaveable { mutableStateOf(existingPraca == null || isEditMode) }
     var newDeadlineName by rememberSaveable { mutableStateOf("") }
 
@@ -86,14 +89,18 @@ fun EditSemPracaScreen(
                     value = name,
                     onValueChange = { name = it },
                     label = { Text("Názov") },
-                    modifier = Modifier.fillMaxWidth().padding(16.dp)
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
                 )
 
                 OutlinedTextField(
                     value = description,
                     onValueChange = { description = it },
                     label = { Text("Informácie") },
-                    modifier = Modifier.fillMaxWidth().padding(16.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
                     minLines = 3
                 )
             }
@@ -129,7 +136,7 @@ fun EditSemPracaScreen(
                             }
                             IconButton(
                                 onClick = {
-                                    deadlines = deadlines.filter { it != deadline }
+                                    //deadlines = deadlines.filter { it != deadline } //TODO: fix
                                 }
                             ) {
                                 Icon(
@@ -150,8 +157,16 @@ fun EditSemPracaScreen(
                         onClick = {
                             if (newDeadlineName.isNotEmpty()) {
                                 showDatePicker(context) { timestamp ->
-                                    deadlines = deadlines + Deadline(date = timestamp, name = newDeadlineName)
-                                    newDeadlineName = ""
+                                    if (existingPraca != null) {
+                                        var newDeadline = Deadline(
+                                            id = 0,
+                                            semPracaId = existingPraca.id,
+                                            date = timestamp,
+                                            name = newDeadlineName
+                                        );
+                                        deadlineViewModel.addDeadline(newDeadline)
+                                        newDeadlineName = ""
+                                    }
                                 }
                             }
                         },
@@ -235,7 +250,6 @@ fun EditSemPracaScreen(
                             name = name,
                             description = description,
                             isFinished = false,
-                            deadlines = deadlines,
                             attachments = attachments
                         )
                         viewModel.addPraca(novaPraca)
@@ -243,7 +257,6 @@ fun EditSemPracaScreen(
                         val updatedPraca = existingPraca.copy(
                             name = name,
                             description = description,
-                            deadlines = deadlines,
                             attachments = attachments
                         )
                         viewModel.updatePraca(updatedPraca)

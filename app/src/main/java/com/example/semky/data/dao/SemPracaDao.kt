@@ -14,9 +14,6 @@ interface SemPracaDao {
     @Query("SELECT * FROM sem_prace")
     fun getAllPrace(): Flow<List<SemPraca>>
 
-    @Query("SELECT * FROM sem_prace WHERE id = :id")
-    suspend fun getPracaById(id: Long): SemPraca?
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertPraca(praca: SemPraca): Long
 
