@@ -41,4 +41,5 @@
     <string name="todays_deadlines">Dnešné termíny</string>
     <string name="future_deadlines">Blížiace sa termíny</string>
     <string name="late_deadlines">Oneskorenia alebo ukončené</string>
+    <string name="show_completed_deadlines_too">Ukáž aj dokončené</string>
 </resources>

@@ -32,19 +32,28 @@ import java.util.Locale
 fun DeadlinesScreen(
     deadlineViewModel: DeadlineViewModel,
     semPracaViewModel: SemPracaViewModel,
+    showFinished: Boolean = false,
     modifier: Modifier = Modifier
 ) {
     val deadlines by deadlineViewModel.deadlines.collectAsState()
     val semPraceList by semPracaViewModel.semPrace.collectAsState()
     var sortedDeadlines = deadlines.sortedBy { it.date }
+    val filteredSemPraceList = if (showFinished) semPraceList else semPraceList.filter { !it.isFinished }
+    val filteredDeadlines = if (!showFinished) {
+        sortedDeadlines.filter { deadline ->
+            filteredSemPraceList.any { it.id == deadline.semPracaId }
+        }
+    } else {
+        sortedDeadlines
+    }
     val dateFormat = remember { SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()) }
     val today = LocalDate.now()
 
-    val (todayDeadlines, pastDeadlines, futureDeadlines) = remember(sortedDeadlines) {
+    val (todayDeadlines, pastDeadlines, futureDeadlines) = remember(filteredDeadlines) {
         val todayList = mutableListOf<Deadline>()
         val pastList = mutableListOf<Deadline>()
         val futureList = mutableListOf<Deadline>()
-        for (deadline in sortedDeadlines) {
+        for (deadline in filteredDeadlines) {
             val deadlineDate =
                 deadline.date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()
             when {
@@ -62,7 +71,7 @@ fun DeadlinesScreen(
         verticalArrangement = Arrangement.Top
     ) {
         Spacer(modifier = Modifier.height(8.dp))
-        if (sortedDeadlines.isEmpty()) {
+        if (filteredDeadlines.isEmpty()) {
             Text(
                 text = stringResource(R.string.no_deadlines),
                 style = MaterialTheme.typography.bodyLarge
@@ -71,7 +80,7 @@ fun DeadlinesScreen(
             DeadlineListCard(
                 title = stringResource(R.string.late_deadlines),
                 deadlines = pastDeadlines,
-                semPraceList = semPraceList,
+                semPraceList = filteredSemPraceList,
                 dateFormat = dateFormat,
                 titleColor = MaterialTheme.colorScheme.error
             )
@@ -79,7 +88,7 @@ fun DeadlinesScreen(
             DeadlineListCard(
                 title = stringResource(R.string.todays_deadlines),
                 deadlines = todayDeadlines,
-                semPraceList = semPraceList,
+                semPraceList = filteredSemPraceList,
                 dateFormat = dateFormat,
                 titleColor = MaterialTheme.typography.titleLarge.color
             )
@@ -87,7 +96,7 @@ fun DeadlinesScreen(
             DeadlineListCard(
                 title = stringResource(R.string.future_deadlines),
                 deadlines = futureDeadlines,
-                semPraceList = semPraceList,
+                semPraceList = filteredSemPraceList,
                 dateFormat = dateFormat,
                 titleColor = MaterialTheme.colorScheme.secondary
             )

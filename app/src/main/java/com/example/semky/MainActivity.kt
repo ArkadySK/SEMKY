@@ -16,6 +16,7 @@ import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -83,6 +84,7 @@ class MainActivity : ComponentActivity() {
             SEMKYTheme {
                 var selItemIndex by rememberSaveable { mutableIntStateOf(0) }
                 var showAddDialog by rememberSaveable { mutableStateOf(false) }
+                var showFinishedDeadlines by rememberSaveable { mutableStateOf(false) }
 
                 val navItems = listOf(
                     NavItem(
@@ -112,7 +114,11 @@ class MainActivity : ComponentActivity() {
                 }
 
                 val pointsViewModel = remember {
-                    SemPracaPointsViewModelFactory(pointsRepository, deadlineRepository, applicationContext).create(
+                    SemPracaPointsViewModelFactory(
+                        pointsRepository,
+                        deadlineRepository,
+                        applicationContext
+                    ).create(
                         SemPracaPointsViewModel::class.java
                     )
                 }
@@ -157,6 +163,17 @@ class MainActivity : ComponentActivity() {
                                         modifier = Modifier
                                             .padding(end = 16.dp),
                                         style = MaterialTheme.typography.titleLarge
+                                    )
+                                } else if (selItemIndex == 2) {
+                                    Text(
+                                        text = stringResource(R.string.show_completed_deadlines_too),
+                                        color = MaterialTheme.colorScheme.onPrimary,
+                                        style = MaterialTheme.typography.bodyLarge
+                                    )
+                                    Checkbox(
+                                        checked = showFinishedDeadlines,
+                                        onCheckedChange = { showFinishedDeadlines = it },
+                                        modifier = Modifier.padding(end = 4.dp)
                                     )
                                 }
                             },
@@ -210,7 +227,8 @@ class MainActivity : ComponentActivity() {
                         else -> DeadlinesScreen(
                             modifier = Modifier.padding(innerPadding),
                             deadlineViewModel = deadlineViewModel,
-                            semPracaViewModel = semPraceViewModel
+                            semPracaViewModel = semPraceViewModel,
+                            showFinished = showFinishedDeadlines
                         )
                     }
 
