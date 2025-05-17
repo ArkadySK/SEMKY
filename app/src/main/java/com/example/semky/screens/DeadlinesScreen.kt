@@ -4,8 +4,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -42,21 +44,75 @@ fun DeadlinesScreen(
     ) {
         Spacer(modifier = Modifier.height(8.dp))
         if (sortedDeadlines.isEmpty()) {
-            Text(text = stringResource(R.string.no_deadlines), style = MaterialTheme.typography.bodyLarge)
+            Text(
+                text = stringResource(R.string.no_deadlines),
+                style = MaterialTheme.typography.bodyLarge
+            )
         } else {
-            sortedDeadlines.forEachIndexed { idx, deadline ->
-                val semPraca = semPraceList.find { it.id == deadline.semPracaId }
-                val pracaName = semPraca?.name ?: stringResource(R.string.unknown_semPraca)
-                val deadlineDate: LocalDate = deadline.date.toInstant()
-                    .atZone(ZoneId.systemDefault())
-                    .toLocalDate()
-                val isToday = deadlineDate.isEqual(LocalDate.now())
-                Text(
-                    text = "${idx + 1}. $pracaName - ${deadline.name} | ${dateFormat.format(deadline.date)}",
-                    style = if(isToday) MaterialTheme.typography.titleLarge else MaterialTheme.typography.bodyLarge,
-                    modifier = Modifier.padding(vertical = 4.dp)
-                )
+            Text(
+                text = "Dnešné termíny",
+                style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.onPrimary,
+                modifier = Modifier.padding(8.dp)
+            )
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp)
+            ) {
+                sortedDeadlines.forEach { deadline ->
+                    val deadlineDate: LocalDate = deadline.date.toInstant()
+                        .atZone(ZoneId.systemDefault())
+                        .toLocalDate()
+                    val isToday = deadlineDate.isEqual(LocalDate.now())
+                    if (isToday) {
+                        val semPraca = semPraceList.find { it.id == deadline.semPracaId }
+                        val pracaName = if (semPraca?.isFinished == true) {
+                            "${semPraca.name} (${stringResource(R.string.finished)})"
+                        } else {
+                            semPraca?.name ?: stringResource(R.string.unknown_semPraca)
+                        }
+                        Text(
+                            text = "$pracaName - ${deadline.name}: ${dateFormat.format(deadline.date)}",
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = MaterialTheme.typography.bodyLarge.color,
+                            modifier = Modifier.padding(8.dp)
+                        )
+                    }
+                }
+            }
+            Text(
+                text = "Ostatné termíny",
+                style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.typography.titleLarge.color,
+                modifier = Modifier.padding(8.dp)
+            )
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp)
+            ) {
+                sortedDeadlines.forEach { deadline ->
+                    val deadlineDate: LocalDate = deadline.date.toInstant()
+                        .atZone(ZoneId.systemDefault())
+                        .toLocalDate()
+                    val isToday = deadlineDate.isEqual(LocalDate.now())
+                    if (!isToday) {
+                        val semPraca = semPraceList.find { it.id == deadline.semPracaId }
+                        val pracaName = if (semPraca?.isFinished == true) {
+                            "${semPraca.name} (${stringResource(R.string.finished)})"
+                        } else {
+                            semPraca?.name ?: stringResource(R.string.unknown_semPraca)
+                        }
+                        Text(
+                            text = "$pracaName - ${deadline.name}: ${dateFormat.format(deadline.date)}",
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = MaterialTheme.typography.bodyLarge.color,
+                            modifier = Modifier.padding(8.dp)
+                        )
+                    }
+                }
             }
         }
     }
-} 
+}

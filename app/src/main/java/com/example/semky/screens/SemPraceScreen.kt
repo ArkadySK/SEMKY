@@ -67,25 +67,27 @@ fun SemPraceScreen(
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             items(semPraceList) { praca ->
-                PracaCard(
-                    praca = praca,
-                    onDelete = {
-                        pointsViewModel.deletePoints(praca)
-                        viewModel.deletePraca(praca)
-                    },
-                    onClick = {
-                        selectedPracaId = praca.id
-                        showDialog = true
-                    },
-                    modifier = Modifier
-                )
+                if (!praca.isFinished) {
+                    PracaCard(
+                        praca = praca,
+                        onDelete = {
+                            pointsViewModel.deletePoints(praca)
+                            viewModel.deletePraca(praca)
+                        },
+                        onClick = {
+                            selectedPracaId = praca.id
+                            showDialog = true
+                        },
+                        modifier = Modifier
+                    )
+                }
             }
         }
     }
 
     if (showDialog) {
         Dialog(
-            onDismissRequest = { 
+            onDismissRequest = {
                 showDialog = false
                 selectedPracaId = null
             }
@@ -95,7 +97,7 @@ fun SemPraceScreen(
                 existingPraca = selectedPraca,
                 pointsViewModel = pointsViewModel,
                 deadlineViewModel = deadlineViewModel,
-                onNavigateBack = { 
+                onNavigateBack = {
                     showDialog = false
                     selectedPracaId = null
                 }
