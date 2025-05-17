@@ -149,8 +149,7 @@ class MainActivity : ComponentActivity() {
                                             modifier = Modifier.size(24.dp)
                                         )
                                     }
-                                }
-                                else if(selItemIndex == 1) {
+                                } else if (selItemIndex == 1) {
                                     Text(
                                         color = MaterialTheme.colorScheme.onPrimary,
                                         text = "$totalPoints bodov",
@@ -173,11 +172,8 @@ class MainActivity : ComponentActivity() {
                                     selected = (navItem.id == selItemIndex),
                                     onClick = { selItemIndex = navItem.id },
                                     icon = {
-                                        BadgedBox(
-                                            // TODO: neskôr ?
-                                            badge = {
-                                            }
-                                        ) {
+                                        BadgedBox(badge = {})
+                                        {
                                             Column(
                                                 horizontalAlignment = Alignment.CenterHorizontally
                                             ) {

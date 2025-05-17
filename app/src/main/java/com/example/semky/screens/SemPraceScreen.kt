@@ -143,22 +143,6 @@ fun PracaCard(
                 }
             }
 
-            // TODO: toto sa bude zobrazovat iba vnutri dialogu
-//            if (deadlines.count() > 0) {
-//                Spacer(modifier = Modifier.height(8.dp))
-//                Text(
-//                    text = "Termíny:",
-//                    style = MaterialTheme.typography.titleSmall,
-//                    modifier = Modifier.padding(top = 8.dp)
-//                )
-//                deadlines.forEach { deadline ->
-//                    Text(
-//                        text = "• ${deadline.name}: ${formatDate(deadline.date)}",
-//                        style = MaterialTheme.typography.bodyMedium
-//                    )
-//                }
-//            }
-
             if (praca.attachments.isNotEmpty()) {
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
