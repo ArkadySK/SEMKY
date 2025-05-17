@@ -38,4 +38,6 @@
     <string name="submit_semPraca_on_time">Odovzdanie práce (v termíne)</string>
     <string name="submit_semPraca_later_with_days">Odovzdanie práce (oneskorenie %1$s dní)</string>
     <string name="submit_semPraca_earlier_with_days">Odovzdanie práce (predčasne %1$s dní)</string>
+    <string name="todays_deadlines">Dnešné termíny</string>
+    <string name="other_deadlines">Ostatné termíny</string>
 </resources>

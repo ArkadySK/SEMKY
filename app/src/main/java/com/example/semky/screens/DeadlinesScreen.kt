@@ -50,7 +50,7 @@ fun DeadlinesScreen(
             )
         } else {
             Text(
-                text = "Dnešné termíny",
+                text = stringResource(R.string.todays_deadlines),
                 style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.colorScheme.onPrimary,
                 modifier = Modifier.padding(8.dp)
@@ -82,7 +82,7 @@ fun DeadlinesScreen(
                 }
             }
             Text(
-                text = "Ostatné termíny",
+                text = stringResource(R.string.other_deadlines),
                 style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.typography.titleLarge.color,
                 modifier = Modifier.padding(8.dp)
