@@ -1,26 +1,19 @@
 package com.example.semky.screens
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
-import com.example.semky.data.model.SemPraca
-import com.example.semky.data.model.SemPracaBody
 import com.example.semky.viewmodel.SemPracaViewModel
 import com.example.semky.viewmodel.SemPracaPointsViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BodyScreen(
+fun PointsScreen(
     viewModel: SemPracaViewModel,
     pointsViewModel: SemPracaPointsViewModel,
     modifier: Modifier = Modifier

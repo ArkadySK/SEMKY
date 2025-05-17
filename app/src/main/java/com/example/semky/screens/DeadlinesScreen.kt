@@ -23,7 +23,7 @@ import java.time.ZoneId
 import java.util.Locale
 
 @Composable
-fun KalendarScreen(
+fun DeadlinesScreen(
     deadlineViewModel: DeadlineViewModel,
     semPracaViewModel: SemPracaViewModel,
     modifier: Modifier = Modifier

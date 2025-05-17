@@ -41,8 +41,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.example.semky.ui.theme.SEMKYTheme
 import com.example.semky.screens.SemPraceScreen
-import com.example.semky.screens.BodyScreen
-import com.example.semky.screens.KalendarScreen
+import com.example.semky.screens.PointsScreen
+import com.example.semky.screens.DeadlinesScreen
 import com.example.semky.data.database.SemkyDatabase
 import com.example.semky.data.repository.DeadlineRepository
 import com.example.semky.data.repository.SemPracaRepository
@@ -98,7 +98,7 @@ class MainActivity : ComponentActivity() {
                     ),
                     NavItem(
                         id = 2,
-                        title = "Kalendár",
+                        title = "Termíny",
                         icon = Icons.Default.DateRange,
                         selectedIcon = Icons.Filled.DateRange
                     )
@@ -204,13 +204,17 @@ class MainActivity : ComponentActivity() {
                             )
                         }
 
-                        1 -> BodyScreen(
+                        1 -> PointsScreen(
                             modifier = Modifier.padding(innerPadding),
                             viewModel = semPraceViewModel,
                             pointsViewModel = pointsViewModel
                         )
 
-                        else -> KalendarScreen(modifier = Modifier.padding(innerPadding))
+                        else -> DeadlinesScreen(
+                            deadlineViewModel = deadlineViewModel,
+                            semPracaViewModel = semPraceViewModel,
+                            modifier = Modifier.padding(innerPadding)
+                        )
                     }
 
                     if (showAddDialog) {

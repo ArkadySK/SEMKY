@@ -1,7 +1,6 @@
 package com.example.semky.data.repository
 
 import com.example.semky.data.dao.SemPracaPointsDao
-import com.example.semky.data.model.SemPraca
 import com.example.semky.data.model.SemPracaBody
 import kotlinx.coroutines.flow.Flow
 
