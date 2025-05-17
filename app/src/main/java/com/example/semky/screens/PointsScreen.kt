@@ -7,7 +7,9 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.example.semky.R
 import com.example.semky.viewmodel.SemPracaViewModel
 import com.example.semky.viewmodel.SemPracaPointsViewModel
 
@@ -47,7 +49,7 @@ fun PointsScreen(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                text = semPraca?.name ?: "Neznáma práca",
+                                text = semPraca?.name ?: stringResource(R.string.unknown_semPraca),
                                 style = MaterialTheme.typography.titleMedium
                             )
                         }
@@ -60,7 +62,7 @@ fun PointsScreen(
                                 style = MaterialTheme.typography.bodyMedium
                             )
                             Text(
-                                text = "${points.points} bodov",
+                                text = stringResource(R.string.nb_points, points.points),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onPrimary
                             )

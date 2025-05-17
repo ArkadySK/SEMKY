@@ -20,10 +20,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.example.semky.R
 import com.example.semky.data.model.Deadline
 import com.example.semky.data.model.SemPraca
 import com.example.semky.viewmodel.DeadlineViewModel
@@ -37,13 +39,13 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun EditSemPracaScreen(
+    modifier: Modifier = Modifier,
     viewModel: SemPracaViewModel,
     pointsViewModel: SemPracaPointsViewModel,
     deadlineViewModel: DeadlineViewModel,
     existingPraca: SemPraca? = null,
     isEditMode: Boolean = false,
-    onNavigateBack: () -> Unit,
-    modifier: Modifier = Modifier
+    onNavigateBack: () -> Unit
 ) {
     var name by rememberSaveable { mutableStateOf(existingPraca?.name ?: "") }
     var description by rememberSaveable { mutableStateOf(existingPraca?.description ?: "") }
@@ -75,8 +77,8 @@ fun EditSemPracaScreen(
         ) {
             Text(
                 text = when {
-                    existingPraca == null -> "Nová semestrálna práca"
-                    isEditing -> "Úprava semestrálnej práce"
+                    existingPraca == null -> stringResource(R.string.new_semPraca)
+                    isEditing -> stringResource(R.string.edit_semPraca)
                     else -> existingPraca.name
                 },
                 style = MaterialTheme.typography.headlineMedium,
@@ -92,7 +94,7 @@ fun EditSemPracaScreen(
                 OutlinedTextField(
                     value = name,
                     onValueChange = { name = it },
-                    label = { Text("Názov") },
+                    label = { Text(stringResource(R.string.name)) },
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(16.dp)
@@ -101,7 +103,7 @@ fun EditSemPracaScreen(
                 OutlinedTextField(
                     value = description,
                     onValueChange = { description = it },
-                    label = { Text("Informácie") },
+                    label = { Text(stringResource(R.string.information)) },
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(16.dp),
@@ -118,7 +120,7 @@ fun EditSemPracaScreen(
                     modifier = Modifier.padding(16.dp)
                 ) {
                     Text(
-                        text = "Termíny",
+                        text = stringResource(R.string.deadlines),
                         style = MaterialTheme.typography.titleMedium
                     )
                     Spacer(modifier = Modifier.height(8.dp))
@@ -145,7 +147,7 @@ fun EditSemPracaScreen(
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.Delete,
-                                    contentDescription = "Remove deadline"
+                                    contentDescription = stringResource(R.string.accessibility_remove_deadline)
                                 )
                             }
                         }
@@ -153,7 +155,7 @@ fun EditSemPracaScreen(
                     OutlinedTextField(
                         value = newDeadlineName,
                         onValueChange = { newDeadlineName = it },
-                        label = { Text("Názov termínu") },
+                        label = { Text(stringResource(R.string.deadline_name)) },
                         modifier = Modifier.fillMaxWidth()
                     )
                     Spacer(modifier = Modifier.height(8.dp))
@@ -179,10 +181,10 @@ fun EditSemPracaScreen(
                     ) {
                         Icon(
                             imageVector = Icons.Default.Add,
-                            contentDescription = "Add deadline"
+                            contentDescription = stringResource(R.string.accessibility_add_deadline)
                         )
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text("Pridať termín")
+                        Text(stringResource(R.string.add_deadline))
                     }
                 }
             }
@@ -197,7 +199,7 @@ fun EditSemPracaScreen(
                     modifier = Modifier.padding(16.dp)
                 ) {
                     Text(
-                        text = "Prílohy",
+                        text = stringResource(R.string.attachments),
                         style = MaterialTheme.typography.titleMedium
                     )
                     Spacer(modifier = Modifier.height(8.dp))
@@ -208,7 +210,7 @@ fun EditSemPracaScreen(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                text = "Príloha $attachmentId",
+                                text = stringResource(R.string.attachment_with_id, attachmentId),
                                 style = MaterialTheme.typography.bodyMedium
                             )
                             IconButton(
@@ -218,7 +220,7 @@ fun EditSemPracaScreen(
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.Delete,
-                                    contentDescription = "Remove attachment"
+                                    contentDescription = stringResource(R.string.accessibility_remove_attachment)
                                 )
                             }
                         }
@@ -237,10 +239,10 @@ fun EditSemPracaScreen(
                     ) {
                         Icon(
                             imageVector = Icons.Default.Add,
-                            contentDescription = "Add attachment"
+                            contentDescription = stringResource(R.string.accessibility_add_attachment)
                         )
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text("Pridať prílohu")
+                        Text(stringResource(R.string.add_attachment))
                     }
                 }
             }
@@ -284,7 +286,7 @@ fun EditSemPracaScreen(
                 enabled = name.isNotEmpty() && description.isNotEmpty(),
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("Uložiť")
+                Text(stringResource(R.string.save))
             }
         } else {
             // View mod
@@ -297,7 +299,7 @@ fun EditSemPracaScreen(
                     modifier = Modifier.padding(16.dp)
                 ) {
                     Text(
-                        text = "Informácie:",
+                        text = stringResource(R.string.information),
                         style = MaterialTheme.typography.titleMedium,
                         modifier = Modifier.padding(bottom = 8.dp)
                     )
@@ -309,7 +311,7 @@ fun EditSemPracaScreen(
                     if (deadlinesDb.isNotEmpty()) {
                         Spacer(modifier = Modifier.height(16.dp))
                         Text(
-                            text = "Termíny:",
+                            text = "${stringResource(R.string.deadlines)}:",
                             style = MaterialTheme.typography.titleMedium
                         )
                         deadlinesDb.forEach { deadline ->
@@ -323,7 +325,7 @@ fun EditSemPracaScreen(
                     if (attachments.isNotEmpty()) {
                         Spacer(modifier = Modifier.height(16.dp))
                         Text(
-                            text = "Prílohy:",
+                            text = "${stringResource(R.string.attachments)}:",
                             style = MaterialTheme.typography.titleMedium
                         )
                         attachments.forEach { attachmentId ->
@@ -334,7 +336,7 @@ fun EditSemPracaScreen(
                                 },
                                 modifier = Modifier.fillMaxWidth()
                             ) {
-                                Text(text = "Príloha $attachmentId")
+                                Text(text = stringResource(R.string.attachment_with_id, attachmentId),)
                             }
                         }
                     }
@@ -347,7 +349,9 @@ fun EditSemPracaScreen(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = if (existingPraca?.isFinished == true) "Stav: Dokončené" else "Stav: Nedokončené",
+                            text = if (existingPraca?.isFinished == true) stringResource(R.string.status_finished) else stringResource(
+                                R.string.status_unfinished
+                            ),
                             style = MaterialTheme.typography.titleMedium
                         )
                         Button(
@@ -365,9 +369,9 @@ fun EditSemPracaScreen(
                         ) {
                             Text(
                                 text = if (existingPraca?.isFinished == true)
-                                    "Dokončené!"
+                                    stringResource(R.string.finished)
                                 else
-                                    "Dokonči"
+                                    stringResource(R.string.finish)
                             )
                         }
                     }
@@ -386,7 +390,7 @@ fun EditSemPracaScreen(
                     onClick = { isEditing = true },
                     modifier = Modifier.weight(1f)
                 ) {
-                    Text("Upraviť")
+                    Text(stringResource(R.string.edit))
                 }
             }
 
@@ -394,7 +398,7 @@ fun EditSemPracaScreen(
                 onClick = onNavigateBack,
                 modifier = Modifier.weight(1f)
             ) {
-                Text(if (isEditing) "Zrušiť" else "Zavrieť")
+                Text(if (isEditing) stringResource(R.string.cancel) else stringResource(R.string.close))
             }
         }
     }
@@ -442,10 +446,10 @@ private fun showDatePicker(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AttachmentGallery(
+    modifier: Modifier = Modifier.fillMaxWidth(),
     attachmentId: Long,
     viewModel: SemPracaViewModel,
-    onDismiss: () -> Unit,
-    modifier: Modifier = Modifier.fillMaxWidth()
+    onDismiss: () -> Unit
 ) {
     val context = LocalContext.current
     val file = viewModel.getAttachmentFile(attachmentId)
@@ -463,10 +467,10 @@ fun AttachmentGallery(
             ) {
                 Icon(
                     imageVector = Icons.Default.Close,
-                    contentDescription = "Close"
+                    contentDescription = stringResource(R.string.accessibility_close)
                 )
                 Spacer(modifier = Modifier.width(8.dp))
-                Text(text = "Späť")
+                Text(text = stringResource(R.string.go_back))
             }
 
             if (file != null) {
@@ -475,7 +479,7 @@ fun AttachmentGallery(
                         .data(file)
                         .crossfade(true)
                         .build(),
-                    contentDescription = "Attachment",
+                    contentDescription = stringResource(R.string.accessibility_attachment),
                     modifier = Modifier
                         .fillMaxWidth()
                         .fillMaxHeight(),
@@ -483,7 +487,7 @@ fun AttachmentGallery(
                 )
             } else {
                 Text(
-                    text = "Príloha sa nenašla",
+                    text = stringResource(R.string.attachment_not_found),
                     style = MaterialTheme.typography.bodyMedium
                 )
             }

@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.example.semky.R
 import com.example.semky.data.model.Deadline
 import com.example.semky.data.repository.DeadlineRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -59,6 +60,7 @@ class DeadlineViewModel(
     }
 }
 
+//src: https://medium.com/@1mailanton/approaches-to-creating-viewmodel-in-android-f9f6f62a155a
 class DeadlineViewModelFactory(
     private val repository: DeadlineRepository,
     private val context: Context
@@ -68,6 +70,6 @@ class DeadlineViewModelFactory(
             @Suppress("UNCHECKED_CAST")
             return DeadlineViewModel(repository) as T
         }
-        throw IllegalArgumentException("Unknown ViewModel class")
+        throw IllegalArgumentException(context.getString(R.string.error_unknown_viewmodel_class))
     }
 } 

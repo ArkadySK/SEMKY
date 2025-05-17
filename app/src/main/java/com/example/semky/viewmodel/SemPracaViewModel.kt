@@ -5,6 +5,7 @@ import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.example.semky.R
 import com.example.semky.data.FileManager
 import com.example.semky.data.model.SemPraca
 import com.example.semky.data.repository.SemPracaRepository
@@ -52,6 +53,7 @@ class SemPracaViewModel(
     fun getAttachmentFile(attachmentId: Long) = fileManager.getAttachmentFile(attachmentId)
 }
 
+//src: https://medium.com/@1mailanton/approaches-to-creating-viewmodel-in-android-f9f6f62a155a
 class SemPracaViewModelFactory(
     private val repository: SemPracaRepository,
     private val context: Context
@@ -61,6 +63,6 @@ class SemPracaViewModelFactory(
             @Suppress("UNCHECKED_CAST")
             return SemPracaViewModel(repository, FileManager(context)) as T
         }
-        throw IllegalArgumentException("Unknown ViewModel class")
+        throw IllegalArgumentException(context.getString(R.string.error_unknown_viewmodel_class))
     }
 } 

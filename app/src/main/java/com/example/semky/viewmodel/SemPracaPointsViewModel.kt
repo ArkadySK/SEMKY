@@ -1,8 +1,10 @@
 package com.example.semky.viewmodel
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.example.semky.R
 import com.example.semky.data.model.SemPraca
 import com.example.semky.data.model.SemPracaBody
 import com.example.semky.data.repository.DeadlineRepository
@@ -18,7 +20,8 @@ import kotlin.math.min
 
 class SemPracaPointsViewModel(
     private val repository: SemPracaPointsRepository,
-    private val deadlineRepository: DeadlineRepository
+    private val deadlineRepository: DeadlineRepository,
+    private val context: Context
 ) : ViewModel() {
 
     val allPoints: StateFlow<List<SemPracaBody>> = repository.getAllPoints()
@@ -54,9 +57,9 @@ class SemPracaPointsViewModel(
                 val totalPoints = max(1, 10 + pointsAdjustment)
 
                 val description = when {
-                    daysDifference > 0 -> "Odovzdanie práce (oneskorenie ${daysDifference} dní)"
-                    daysDifference < 0 -> "Odovzdanie práce (predčasne ${abs(daysDifference)} dní)"
-                    else -> "Odovzdanie práce (v termíne)"
+                    daysDifference > 0 -> context.getString(R.string.submit_semPraca_later_with_days, daysDifference.toString())
+                    daysDifference < 0 -> context.getString(R.string.submit_semPraca_earlier_with_days, abs(daysDifference).toString())
+                    else -> context.getString(R.string.submit_semPraca_on_time)
                 }
 
                 repository.insertPoints(
@@ -77,15 +80,17 @@ class SemPracaPointsViewModel(
     }
 }
 
+//src: https://medium.com/@1mailanton/approaches-to-creating-viewmodel-in-android-f9f6f62a155a
 class SemPracaPointsViewModelFactory(
     private val repository: SemPracaPointsRepository,
-    private val deadlineRepository: DeadlineRepository
+    private val deadlineRepository: DeadlineRepository,
+    private val context: Context
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(SemPracaPointsViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")
-            return SemPracaPointsViewModel(repository, deadlineRepository) as T
+            return SemPracaPointsViewModel(repository, deadlineRepository, context) as T
         }
-        throw IllegalArgumentException("Unknown ViewModel class")
+        throw IllegalArgumentException(context.getString(R.string.error_unknown_viewmodel_class))
     }
 } 

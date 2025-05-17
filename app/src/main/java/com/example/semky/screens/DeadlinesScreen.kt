@@ -14,7 +14,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.example.semky.R
 import com.example.semky.viewmodel.DeadlineViewModel
 import com.example.semky.viewmodel.SemPracaViewModel
 import java.text.SimpleDateFormat
@@ -40,17 +42,17 @@ fun DeadlinesScreen(
     ) {
         Spacer(modifier = Modifier.height(8.dp))
         if (sortedDeadlines.isEmpty()) {
-            Text(text = "Žiadne termíny", style = MaterialTheme.typography.bodyLarge)
+            Text(text = stringResource(R.string.no_deadlines), style = MaterialTheme.typography.bodyLarge)
         } else {
             sortedDeadlines.forEachIndexed { idx, deadline ->
                 val semPraca = semPraceList.find { it.id == deadline.semPracaId }
-                val pracaName = semPraca?.name ?: "Neznáma práca"
+                val pracaName = semPraca?.name ?: stringResource(R.string.unknown_semPraca)
                 val deadlineDate: LocalDate = deadline.date.toInstant()
                     .atZone(ZoneId.systemDefault())
                     .toLocalDate()
                 val isToday = deadlineDate.isEqual(LocalDate.now())
                 Text(
-                    text = "${idx + 1}. $pracaName: ${deadline.name} | ${dateFormat.format(deadline.date)}",
+                    text = "${idx + 1}. $pracaName - ${deadline.name} | ${dateFormat.format(deadline.date)}",
                     style = if(isToday) MaterialTheme.typography.titleLarge else MaterialTheme.typography.bodyLarge,
                     modifier = Modifier.padding(vertical = 4.dp)
                 )

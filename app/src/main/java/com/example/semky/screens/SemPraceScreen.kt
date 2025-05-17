@@ -27,8 +27,10 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import com.example.semky.R
 import com.example.semky.data.model.Deadline
 import com.example.semky.data.model.SemPraca
 import com.example.semky.viewmodel.DeadlineViewModel
@@ -129,7 +131,7 @@ fun PracaCard(
                     )
                     if (praca.isFinished) {
                         Text(
-                            text = "Dokončené",
+                            text = stringResource(R.string.finished),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onPrimary
                         )
@@ -138,7 +140,7 @@ fun PracaCard(
                 IconButton(onClick = onDelete) {
                     Icon(
                         imageVector = Icons.Default.Delete,
-                        contentDescription = "Delete"
+                        contentDescription = stringResource(R.string.accessibility_delete)
                     )
                 }
             }
@@ -146,7 +148,7 @@ fun PracaCard(
             if (praca.attachments.isNotEmpty()) {
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = "Prílohy: " + praca.attachments.count(),
+                    text = "${stringResource(R.string.attachments)}: " + praca.attachments.count(),
                     style = MaterialTheme.typography.titleSmall,
                     modifier = Modifier.padding(top = 8.dp)
                 )

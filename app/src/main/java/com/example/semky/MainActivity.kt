@@ -36,6 +36,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
@@ -86,19 +87,19 @@ class MainActivity : ComponentActivity() {
                 val navItems = listOf(
                     NavItem(
                         id = 0,
-                        title = "Sem. práce",
+                        title = stringResource(R.string.screen_title_semPrace),
                         icon = Icons.Default.Menu,
                         selectedIcon = Icons.Filled.Menu
                     ),
                     NavItem(
                         id = 1,
-                        title = "Body",
+                        title = stringResource(R.string.screen_title_points),
                         icon = Icons.Default.Info,
                         selectedIcon = Icons.Filled.Info
                     ),
                     NavItem(
                         id = 2,
-                        title = "Termíny",
+                        title = stringResource(R.string.screen_title_deadlines),
                         icon = Icons.Default.DateRange,
                         selectedIcon = Icons.Filled.DateRange
                     )
@@ -111,7 +112,7 @@ class MainActivity : ComponentActivity() {
                 }
 
                 val pointsViewModel = remember {
-                    SemPracaPointsViewModelFactory(pointsRepository, deadlineRepository).create(
+                    SemPracaPointsViewModelFactory(pointsRepository, deadlineRepository, applicationContext).create(
                         SemPracaPointsViewModel::class.java
                     )
                 }
@@ -145,14 +146,14 @@ class MainActivity : ComponentActivity() {
                                     ) {
                                         Icon(
                                             imageVector = Icons.Default.Add,
-                                            contentDescription = "Add",
+                                            contentDescription = stringResource(R.string.accessibility_add_SemPraca),
                                             modifier = Modifier.size(24.dp)
                                         )
                                     }
                                 } else if (selItemIndex == 1) {
                                     Text(
                                         color = MaterialTheme.colorScheme.onPrimary,
-                                        text = "$totalPoints bodov",
+                                        text = stringResource(R.string.nb_points, totalPoints),
                                         modifier = Modifier
                                             .padding(end = 16.dp),
                                         style = MaterialTheme.typography.titleLarge
