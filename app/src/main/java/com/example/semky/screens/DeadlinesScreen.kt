@@ -19,6 +19,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.semky.R
+import com.example.semky.data.model.Deadline
+import com.example.semky.data.model.SemPraca
 import com.example.semky.viewmodel.DeadlineViewModel
 import com.example.semky.viewmodel.SemPracaViewModel
 import java.text.SimpleDateFormat
@@ -34,8 +36,25 @@ fun DeadlinesScreen(
 ) {
     val deadlines by deadlineViewModel.deadlines.collectAsState()
     val semPraceList by semPracaViewModel.semPrace.collectAsState()
-    val sortedDeadlines = deadlines.sortedBy { it.date }
+    var sortedDeadlines = deadlines.sortedBy { it.date }
     val dateFormat = remember { SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()) }
+    val today = LocalDate.now()
+
+    val (todayDeadlines, pastDeadlines, futureDeadlines) = remember(sortedDeadlines) {
+        val todayList = mutableListOf<Deadline>()
+        val pastList = mutableListOf<Deadline>()
+        val futureList = mutableListOf<Deadline>()
+        for (deadline in sortedDeadlines) {
+            val deadlineDate =
+                deadline.date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()
+            when {
+                deadlineDate.isEqual(today) -> todayList.add(deadline)
+                deadlineDate.isBefore(today) -> pastList.add(deadline)
+                deadlineDate.isAfter(today) -> futureList.add(deadline)
+            }
+        }
+        Triple(todayList, pastList, futureList)
+    }
 
     Column(
         modifier = modifier.fillMaxSize(),
@@ -49,68 +68,68 @@ fun DeadlinesScreen(
                 style = MaterialTheme.typography.bodyLarge
             )
         } else {
-            Text(
-                text = stringResource(R.string.todays_deadlines),
-                style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.error,
-                modifier = Modifier.padding(8.dp)
+            DeadlineListCard(
+                title = stringResource(R.string.late_deadlines),
+                deadlines = pastDeadlines,
+                semPraceList = semPraceList,
+                dateFormat = dateFormat,
+                titleColor = MaterialTheme.colorScheme.error
             )
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
-            ) {
-                sortedDeadlines.forEach { deadline ->
-                    val deadlineDate: LocalDate = deadline.date.toInstant()
-                        .atZone(ZoneId.systemDefault())
-                        .toLocalDate()
-                    val isToday = deadlineDate.isEqual(LocalDate.now())
-                    if (isToday) {
-                        val semPraca = semPraceList.find { it.id == deadline.semPracaId }
-                        val pracaName = if (semPraca?.isFinished == true) {
-                            "${semPraca.name} (${stringResource(R.string.finished)})"
-                        } else {
-                            semPraca?.name ?: stringResource(R.string.unknown_semPraca)
-                        }
-                        Text(
-                            text = "$pracaName - ${deadline.name}: ${dateFormat.format(deadline.date)}",
-                            style = MaterialTheme.typography.bodyLarge,
-                            color = if(semPraca?.isFinished == true) MaterialTheme.colorScheme.onPrimary else MaterialTheme.typography.bodyLarge.color,
-                            modifier = Modifier.padding(16.dp)
-                        )
-                    }
-                }
-            }
-            Text(
-                text = stringResource(R.string.other_deadlines),
-                style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.typography.titleLarge.color,
-                modifier = Modifier.padding(8.dp)
+            Spacer(modifier = Modifier.height(8.dp))
+            DeadlineListCard(
+                title = stringResource(R.string.todays_deadlines),
+                deadlines = todayDeadlines,
+                semPraceList = semPraceList,
+                dateFormat = dateFormat,
+                titleColor = MaterialTheme.typography.titleLarge.color
             )
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
-            ) {
-                sortedDeadlines.forEach { deadline ->
-                    val deadlineDate: LocalDate = deadline.date.toInstant()
-                        .atZone(ZoneId.systemDefault())
-                        .toLocalDate()
-                    val isToday = deadlineDate.isEqual(LocalDate.now())
-                    if (!isToday) {
-                        val semPraca = semPraceList.find { it.id == deadline.semPracaId }
-                        val pracaName = if (semPraca?.isFinished == true) {
-                            "${semPraca.name} (${stringResource(R.string.finished)})"
-                        } else {
-                            semPraca?.name ?: stringResource(R.string.unknown_semPraca)
-                        }
-                        Text(
-                            text = "$pracaName - ${deadline.name}: ${dateFormat.format(deadline.date)}",
-                            style = MaterialTheme.typography.bodyLarge,
-                            color = if(semPraca?.isFinished == true) MaterialTheme.colorScheme.onPrimary else MaterialTheme.typography.bodyLarge.color,
-                            modifier = Modifier.padding(16.dp)
-                        )
+            Spacer(modifier = Modifier.height(8.dp))
+            DeadlineListCard(
+                title = stringResource(R.string.future_deadlines),
+                deadlines = futureDeadlines,
+                semPraceList = semPraceList,
+                dateFormat = dateFormat,
+                titleColor = MaterialTheme.colorScheme.secondary
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+        }
+    }
+}
+
+@Composable
+private fun DeadlineListCard(
+    title: String,
+    deadlines: List<Deadline>,
+    semPraceList: List<SemPraca>,
+    dateFormat: SimpleDateFormat,
+    titleColor: androidx.compose.ui.graphics.Color
+) {
+    if (deadlines.isNotEmpty()) {
+        Text(
+            text = title,
+            style = MaterialTheme.typography.titleLarge,
+            color = titleColor,
+            modifier = Modifier.padding(vertical = 8.dp)
+        )
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp)
+        ) {
+            Column {
+                deadlines.forEach { deadline ->
+                    val semPraca = semPraceList.find { it.id == deadline.semPracaId }
+                    val pracaName = if (semPraca?.isFinished == true) {
+                        "${semPraca.name} (${stringResource(R.string.finished)})"
+                    } else {
+                        semPraca?.name ?: stringResource(R.string.unknown_semPraca)
                     }
+                    Text(
+                        text = "$pracaName - ${deadline.name}: ${dateFormat.format(deadline.date)}",
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = if (semPraca?.isFinished == true) MaterialTheme.colorScheme.onPrimary else MaterialTheme.typography.bodyLarge.color,
+                        modifier = Modifier.padding(16.dp)
+                    )
                 }
             }
         }
