@@ -8,14 +8,15 @@ import kotlinx.coroutines.flow.Flow
 class SemPracaPointsRepository(private val semPracaPointsDao: SemPracaPointsDao) {
     fun getAllPoints(): Flow<List<SemPracaBody>> = semPracaPointsDao.getAllPoints()
 
-    suspend fun getPointsBySemPracaId(semPracaId: Long): SemPracaBody =
+    suspend fun getPointsBySemPracaId(semPracaId: Long): SemPracaBody? =
         semPracaPointsDao.getPointsBySemPracaId(semPracaId)
 
     suspend fun insertPoints(points: SemPracaBody): Long = 
         semPracaPointsDao.insertPoints(points)
 
     suspend fun deleteBySemPracaId(pracaId: Long) {
-        val body: SemPracaBody = semPracaPointsDao.getPointsBySemPracaId(pracaId)
-        semPracaPointsDao.deletePoints(body)
+        val body: SemPracaBody? = semPracaPointsDao.getPointsBySemPracaId(pracaId)
+        if(body != null)
+            semPracaPointsDao.deletePoints(body)
     }
 }

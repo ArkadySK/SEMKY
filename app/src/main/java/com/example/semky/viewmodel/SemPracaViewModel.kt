@@ -26,10 +26,8 @@ class SemPracaViewModel(
             initialValue = emptyList()
         )
 
-    fun addPraca(praca: SemPraca) {
-        viewModelScope.launch {
-            repository.insertPraca(praca)
-        }
+    suspend fun addPraca(praca: SemPraca): Long {
+        return repository.insertPraca(praca)
     }
 
     fun updatePraca(praca: SemPraca) {

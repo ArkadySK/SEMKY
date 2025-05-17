@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface SemPracaPointsDao {
     @Query("SELECT * FROM sem_praca_body WHERE semPracaId = :semPracaId LIMIT 1")
-    suspend fun getPointsBySemPracaId(semPracaId: Long): SemPracaBody
+    suspend fun getPointsBySemPracaId(semPracaId: Long): SemPracaBody?
 
     @Query("SELECT * FROM sem_praca_body")
     fun getAllPoints(): Flow<List<SemPracaBody>>

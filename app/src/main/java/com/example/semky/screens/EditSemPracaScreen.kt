@@ -33,6 +33,7 @@ import java.util.Date
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
+import kotlinx.coroutines.launch
 
 @Composable
 fun EditSemPracaScreen(
@@ -58,6 +59,7 @@ fun EditSemPracaScreen(
     var showAttachmentDialog by rememberSaveable { mutableStateOf(false) }
 
     val context = LocalContext.current
+    val scope = rememberCoroutineScope()
 
     Column(
         modifier = modifier
@@ -254,11 +256,14 @@ fun EditSemPracaScreen(
                             isFinished = false,
                             attachments = attachments
                         )
-                        viewModel.addPraca(novaPraca)
                         // uloz nove terminy s novym id
-                        deadlines.forEach { deadline ->
-                            val toSave = deadline.copy(semPracaId = novaPraca.id)
-                            deadlineViewModel.addDeadline(toSave)
+                        scope.launch {
+                            val newId = viewModel.addPraca(novaPraca)
+                            deadlines.forEach { deadline ->
+                                val toSave = deadline.copy(semPracaId = newId)
+                                deadlineViewModel.addDeadline(toSave)
+                            }
+                            onNavigateBack()
                         }
                     } else {
                         val updatedPraca = existingPraca.copy(
@@ -273,8 +278,8 @@ fun EditSemPracaScreen(
                             val toSave = deadline.copy(semPracaId = existingPraca.id)
                             deadlineViewModel.addDeadline(toSave)
                         }
+                        onNavigateBack()
                     }
-                    onNavigateBack()
                 },
                 enabled = name.isNotEmpty() && description.isNotEmpty(),
                 modifier = Modifier.fillMaxWidth()
