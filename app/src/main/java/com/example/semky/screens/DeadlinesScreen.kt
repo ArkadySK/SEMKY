@@ -52,13 +52,13 @@ fun DeadlinesScreen(
             Text(
                 text = stringResource(R.string.todays_deadlines),
                 style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.onPrimary,
+                color = MaterialTheme.colorScheme.error,
                 modifier = Modifier.padding(8.dp)
             )
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(8.dp)
+                    .padding(horizontal = 16.dp)
             ) {
                 sortedDeadlines.forEach { deadline ->
                     val deadlineDate: LocalDate = deadline.date.toInstant()
@@ -75,8 +75,8 @@ fun DeadlinesScreen(
                         Text(
                             text = "$pracaName - ${deadline.name}: ${dateFormat.format(deadline.date)}",
                             style = MaterialTheme.typography.bodyLarge,
-                            color = MaterialTheme.typography.bodyLarge.color,
-                            modifier = Modifier.padding(8.dp)
+                            color = if(semPraca?.isFinished == true) MaterialTheme.colorScheme.onPrimary else MaterialTheme.typography.bodyLarge.color,
+                            modifier = Modifier.padding(16.dp)
                         )
                     }
                 }
@@ -90,7 +90,7 @@ fun DeadlinesScreen(
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(8.dp)
+                    .padding(horizontal = 16.dp)
             ) {
                 sortedDeadlines.forEach { deadline ->
                     val deadlineDate: LocalDate = deadline.date.toInstant()
@@ -107,8 +107,8 @@ fun DeadlinesScreen(
                         Text(
                             text = "$pracaName - ${deadline.name}: ${dateFormat.format(deadline.date)}",
                             style = MaterialTheme.typography.bodyLarge,
-                            color = MaterialTheme.typography.bodyLarge.color,
-                            modifier = Modifier.padding(8.dp)
+                            color = if(semPraca?.isFinished == true) MaterialTheme.colorScheme.onPrimary else MaterialTheme.typography.bodyLarge.color,
+                            modifier = Modifier.padding(16.dp)
                         )
                     }
                 }

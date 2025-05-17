@@ -29,7 +29,6 @@ fun PointsScreen(
         Spacer(modifier = Modifier.height(16.dp))
         LazyColumn(
             modifier = Modifier
-                .weight(1f)
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)

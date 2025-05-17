@@ -208,9 +208,9 @@ class MainActivity : ComponentActivity() {
                         )
 
                         else -> DeadlinesScreen(
+                            modifier = Modifier.padding(innerPadding),
                             deadlineViewModel = deadlineViewModel,
-                            semPracaViewModel = semPraceViewModel,
-                            modifier = Modifier.padding(innerPadding)
+                            semPracaViewModel = semPraceViewModel
                         )
                     }
 
