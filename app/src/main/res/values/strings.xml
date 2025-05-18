@@ -42,4 +42,7 @@
     <string name="future_deadlines">Blížiace sa termíny</string>
     <string name="late_deadlines">Oneskorenia alebo ukončené</string>
     <string name="show_completed_deadlines_too">Ukáž aj dokončené</string>
+    <string name="deadlines_channel_name">Termíny</string>
+    <string name="deadlines_channel_description">Upozornenia na blížiace sa termíny</string>
+    <string name="deadline_approaching">Blížiaci sa termín</string>
 </resources>
