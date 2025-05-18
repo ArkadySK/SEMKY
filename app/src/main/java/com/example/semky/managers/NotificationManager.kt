@@ -16,11 +16,20 @@ import com.example.semky.R
 import com.example.semky.data.model.Deadline
 import java.util.concurrent.TimeUnit
 
+/**
+ * Správa notifikácií pre termíny v aplikácii.
+ * Stará sa o vytváranie notifikačných kanálov a plánovanie notifikácií pre termíny.
+ * Zdroj (približne): https://developer.android.com/develop/ui/views/notifications/build-notification#kotlin
+ */
 object NotificationManager {
     const val CHANNEL_ID = "deadlines_channel"
     var canPostNotifications = true
 
-    // src: https://developer.android.com/develop/ui/views/notifications/build-notification#kotlin
+    /**
+     * Vytvorí notifikačný kanál pre notifikácie termínov.
+     *
+     * @param context Kontext aplikácie používaný pre notifikačné operácie
+     */
     fun createNotificationChannel(context: Context) {
         val name = context.getString(R.string.deadlines_channel_name)
         val descriptionText = context.getString(R.string.deadlines_channel_description)
@@ -33,6 +42,13 @@ object NotificationManager {
         notificationManager.createNotificationChannel(channel)
     }
 
+    /**
+     * Naplánuje notifikáciu pre termín, ktorá sa zobrazí 8 hodín pred termínom.
+     * Používa WorkManager pre spoľahlivé spracovanie na pozadí.
+     *
+     * @param context Kontext aplikácie
+     * @param deadline Termín, pre ktorý sa má naplánovať notifikácia
+     */
     fun scheduleDeadlineNotification(context: Context, deadline: Deadline) {
         if (!canPostNotifications) return;
 
@@ -60,11 +76,24 @@ object NotificationManager {
         )
     }
 
+    /**
+     * Zruší predtým naplánovanú notifikáciu pre konkrétny termín.
+     *
+     * @param context Kontext aplikácie
+     * @param deadlineId ID termínu, ktorého notifikácia sa má zrušiť
+     */
     fun cancelDeadlineNotification(context: Context, deadlineId: Long) {
         WorkManager.getInstance(context).cancelUniqueWork("deadline_$deadlineId")
     }
 }
 
+/**
+ * Worker trieda, ktorá spracováva skutočné doručenie notifikácií pre termíny.
+ * Rozširuje Android Worker triedu pre spracovanie na pozadí.
+ *
+ * @property context Kontext aplikácie
+ * @property params Parametre workera obsahujúce informácie o termíne
+ */
 class DeadlineNotificationWorker(
     context: Context,
     params: WorkerParameters

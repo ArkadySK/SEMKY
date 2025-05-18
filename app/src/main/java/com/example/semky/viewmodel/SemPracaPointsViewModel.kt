@@ -18,12 +18,18 @@ import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
 
+/**
+ * ViewModel pre správu bodov semestrálnych prác.
+ */
 class SemPracaPointsViewModel(
     private val repository: SemPracaPointsRepository,
     private val deadlineRepository: DeadlineRepository,
     private val context: Context
 ) : ViewModel() {
 
+    /**
+     * Flow obsahujúci zoznam všetkých bodov semestrálnych prác.
+     */
     val allPoints: StateFlow<List<SemPracaBody>> = repository.getAllPoints()
         .stateIn(
             scope = viewModelScope,

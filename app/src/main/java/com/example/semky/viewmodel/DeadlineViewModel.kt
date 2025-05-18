@@ -15,11 +15,17 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
+/**
+ * ViewModel pre správu termínov v aplikácii.
+ */
 class DeadlineViewModel(
     private val repository: DeadlineRepository,
     private val context: Context
 ) : ViewModel() {
 
+    /**
+     * Flow obsahujúci zoznam všetkých termínov.
+     */
     val deadlines: StateFlow<List<Deadline>> = repository.getAll()
         .stateIn(
             scope = viewModelScope,
@@ -27,6 +33,11 @@ class DeadlineViewModel(
             initialValue = emptyList()
         )
 
+    /**
+     * Pridá nový termín do databázy a naplánuje notifikáciu.
+     *
+     * @param deadline Termín, ktorý sa má pridať
+     */
     fun addDeadline(deadline: Deadline) {
         viewModelScope.launch {
             repository.insertDeadline(deadline)
@@ -34,6 +45,11 @@ class DeadlineViewModel(
         }
     }
 
+    /**
+     * Aktualizuje existujúci termín v databáze a aktualizuje jeho notifikáciu.
+     *
+     * @param deadline Termín, ktorý sa má aktualizovať
+     */
     fun updateDeadline(deadline: Deadline) {
         viewModelScope.launch {
             repository.updateDeadline(deadline)
@@ -41,6 +57,11 @@ class DeadlineViewModel(
         }
     }
 
+    /**
+     * Vymaže termín z databázy a zruší jeho notifikáciu.
+     *
+     * @param deadline Termín, ktorý sa má vymazať
+     */
     fun deleteDeadline(deadline: Deadline) {
         viewModelScope.launch {
             repository.deleteDeadline(deadline)
@@ -48,6 +69,11 @@ class DeadlineViewModel(
         }
     }
 
+    /**
+     * Vymaže všetky termíny spojené s konkrétnou semestrálnou prácou.
+     *
+     * @param pracaId ID semestrálnej práce
+     */
     fun deleteByPracaId(pracaId: Long) {
         viewModelScope.launch {
             val deadlines = repository.getAllByPracaId(pracaId).first()
@@ -58,6 +84,12 @@ class DeadlineViewModel(
         }
     }
 
+    /**
+     * Získa zoznam všetkých termínov pre konkrétnu semestrálnu prácu.
+     *
+     * @param pracaId ID semestrálnej práce
+     * @return Flow obsahujúci zoznam termínov pre danú semestrálnu prácu
+     */
     fun getAllByPracaId(pracaId: Long?): StateFlow<List<Deadline>> {
         if (pracaId == null) return MutableStateFlow(emptyList())
         return repository.getAllByPracaId(pracaId)
@@ -69,7 +101,12 @@ class DeadlineViewModel(
     }
 }
 
-//src: https://medium.com/@1mailanton/approaches-to-creating-viewmodel-in-android-f9f6f62a155a
+/**
+ * Factory trieda pre vytváranie inštancií DeadlineViewModel.
+ * Implementuje ViewModelProvider.Factory pre dependency injection.
+ * 
+ * Zdroj: https://medium.com/@1mailanton/approaches-to-creating-viewmodel-in-android-f9f6f62a155a
+ */
 class DeadlineViewModelFactory(
     private val repository: DeadlineRepository,
     private val context: Context
