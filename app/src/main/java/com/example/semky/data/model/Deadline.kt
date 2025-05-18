@@ -1,7 +1,9 @@
 package com.example.semky.data.model
 
+import android.os.Parcelable
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import kotlinx.parcelize.Parcelize
 import java.util.Date
 
 /**
@@ -13,6 +15,7 @@ import java.util.Date
  * @property date Dátum termínu
  * @property name Názov termínu
  */
+@Parcelize
 @Entity(tableName = "deadlines")
 data class Deadline(
     @PrimaryKey(autoGenerate = true)
@@ -20,5 +23,5 @@ data class Deadline(
     val semPracaId: Long,
     val date: Date,
     val name: String
-) {
+) : Parcelable {
 }
