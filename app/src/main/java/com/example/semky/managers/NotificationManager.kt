@@ -37,15 +37,9 @@ object NotificationManager {
         if (!canPostNotifications) return;
 
         createNotificationChannel(context)
-//        val delay =
-//            deadline.date.time - System.currentTimeMillis() - TimeUnit.HOURS.toMillis(1)
-//        if (delay <= 0) return // Neplánovať upozornenia v minulosti
-
-        //TODO: temp
-        // test: 10 sekund trva kym sa spusti
-        var delay =
-            TimeUnit.SECONDS.toMillis(10)
-
+        // Upozorní používatela 8 hodin pred začatím noveho dňa
+        val delay = deadline.date.time - System.currentTimeMillis() - TimeUnit.HOURS.toMillis(8)
+        if (delay <= 0) return // Neplánovať upozornenia v minulosti
 
         val data = workDataOf(
             "deadline_id" to deadline.id,
