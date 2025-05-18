@@ -18,6 +18,7 @@ import java.util.concurrent.TimeUnit
 
 object NotificationManager {
     const val CHANNEL_ID = "deadlines_channel"
+    var canPostNotifications = true
 
     // src: https://developer.android.com/develop/ui/views/notifications/build-notification#kotlin
     fun createNotificationChannel(context: Context) {
@@ -33,10 +34,18 @@ object NotificationManager {
     }
 
     fun scheduleDeadlineNotification(context: Context, deadline: Deadline) {
-        createNotificationChannel(context)
+        if (!canPostNotifications) return;
 
-        val delay = deadline.date.time - System.currentTimeMillis() - TimeUnit.HOURS.toMillis(1) // 1 hour before
-        if (delay <= 0) return // Neplánovať upozornenia v minulosti
+        createNotificationChannel(context)
+//        val delay =
+//            deadline.date.time - System.currentTimeMillis() - TimeUnit.HOURS.toMillis(1)
+//        if (delay <= 0) return // Neplánovať upozornenia v minulosti
+
+        //TODO: temp
+        // test: 10 sekund trva kym sa spusti
+        var delay =
+            TimeUnit.SECONDS.toMillis(10)
+
 
         val data = workDataOf(
             "deadline_id" to deadline.id,
@@ -71,7 +80,7 @@ class DeadlineNotificationWorker(
         val notificationId = inputData.getLong("deadline_id", 0L).toInt()
 
         val builder = NotificationCompat.Builder(applicationContext, NotificationManager.CHANNEL_ID)
-            //.setSmallIcon(R.drawable.notification_icon)
+            .setSmallIcon(R.drawable.ic_launcher_background)
             .setContentTitle(applicationContext.getString(R.string.deadline_approaching)) //TODO: stringy do resourcov
             .setContentText("Termín s názvom $deadlineName sa blíži!")
             .setPriority(NotificationCompat.PRIORITY_HIGH)
@@ -82,13 +91,6 @@ class DeadlineNotificationWorker(
                     Manifest.permission.POST_NOTIFICATIONS
                 ) != PackageManager.PERMISSION_GRANTED
             ) {
-                // TODO: Consider calling
-                //    ActivityCompat#requestPermissions
-                // here to request the missing permissions, and then overriding
-                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                //                                          int[] grantResults)
-                // to handle the case where the user grants the permission. See the documentation
-                // for ActivityCompat#requestPermissions for more details.
                 return Result.failure()
             }
             notify(notificationId, builder.build())

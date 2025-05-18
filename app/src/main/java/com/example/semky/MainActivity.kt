@@ -1,9 +1,13 @@
 package com.example.semky
 
+import android.Manifest
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -41,6 +45,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import androidx.core.content.ContextCompat
 import com.example.semky.ui.theme.SEMKYTheme
 import com.example.semky.screens.SemPraceScreen
 import com.example.semky.screens.PointsScreen
@@ -49,6 +54,7 @@ import com.example.semky.data.database.SemkyDatabase
 import com.example.semky.data.repository.DeadlineRepository
 import com.example.semky.data.repository.SemPracaRepository
 import com.example.semky.data.repository.SemPracaPointsRepository
+import com.example.semky.notifications.NotificationManager
 import com.example.semky.viewmodel.SemPracaViewModel
 import com.example.semky.viewmodel.SemPracaViewModelFactory
 import com.example.semky.viewmodel.SemPracaPointsViewModel
@@ -82,6 +88,8 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             SEMKYTheme {
+                askNotificationPermission()
+
                 var selItemIndex by rememberSaveable { mutableIntStateOf(0) }
                 var showAddDialog by rememberSaveable { mutableStateOf(false) }
                 var showFinishedDeadlines by rememberSaveable { mutableStateOf(false) }
@@ -249,6 +257,28 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    // src: https://medium.com/@shaikabdullafaizal/android-13-notification-runtime-permission-f91bec2fc256
+    private fun askNotificationPermission() {
+        // This is only necessary for API level >= 33 (TIRAMISU)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) ==
+                PackageManager.PERMISSION_GRANTED
+            ) {
+                NotificationManager.canPostNotifications = true
+            } else {
+                NotificationManager.canPostNotifications = false
+                requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+            }
+        }
+    }
+
+    // src: https://medium.com/@shaikabdullafaizal/android-13-notification-runtime-permission-f91bec2fc256
+    private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted: Boolean ->
+        NotificationManager.canPostNotifications = isGranted
     }
 }
 
