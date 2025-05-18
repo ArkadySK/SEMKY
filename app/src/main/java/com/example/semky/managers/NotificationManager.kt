@@ -91,7 +91,9 @@ object NotificationManager {
  * Worker trieda, ktorá spracováva skutočné doručenie notifikácií pre termíny.
  * Rozširuje Android Worker triedu pre spracovanie na pozadí.
  *
- * @property context Kontext aplikácie
+ * Zdroj (približný) : https://medium.com/@munbonecci/how-to-launch-a-local-notification-in-android-afaa47eb1d1c
+ * 
+ @property context Kontext aplikácie
  * @property params Parametre workera obsahujúce informácie o termíne
  */
 class DeadlineNotificationWorker(

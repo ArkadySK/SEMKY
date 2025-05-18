@@ -37,6 +37,16 @@ class SemPracaPointsViewModel(
             initialValue = emptyList()
         )
 
+    /**
+     * Vypočíta a uloží body pre semestrálnu prácu na základe dátumu odovzdania.
+     * Body sa vypočítajú nasledovne:
+     * - Základných 10 bodov
+     * - Za každý deň predčasného odovzdania +2 body (max 20 extra bodov)
+     * - Za každý deň oneskorenia -1 bod (max -9 bodov)
+     * - Minimálne 1 bod
+     *
+     * @param praca Semestrálna práca, pre ktorú sa majú vypočítať body
+     */
     fun calculateSubmissionPoints(praca: SemPraca) {
         // Očakavame ze posledný deadline bude aj termín odovzdania / dokončenia
         viewModelScope.launch {
@@ -79,6 +89,11 @@ class SemPracaPointsViewModel(
         }
     }
 
+    /**
+     * Vymaže body a informácie k nim, spojené s konkrétnou semestrálnou prácou.
+     *
+     * @param praca Semestrálna práca, ktorej body sa majú vymazať
+     */
     fun deletePoints(praca: SemPraca) {
         viewModelScope.launch {
             repository.deleteBySemPracaId(praca.id)
@@ -86,7 +101,12 @@ class SemPracaPointsViewModel(
     }
 }
 
-//src: https://medium.com/@1mailanton/approaches-to-creating-viewmodel-in-android-f9f6f62a155a
+/**
+ * Factory trieda pre vytváranie inštancií SemPracaPointsViewModel.
+ * Implementuje ViewModelProvider.Factory pre dependency injection.
+ * 
+ * Zdroj: https://medium.com/@1mailanton/approaches-to-creating-viewmodel-in-android-f9f6f62a155a
+ */
 class SemPracaPointsViewModelFactory(
     private val repository: SemPracaPointsRepository,
     private val deadlineRepository: DeadlineRepository,

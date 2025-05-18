@@ -92,7 +92,6 @@ class SemPracaViewModel(
 
 /**
  * Factory trieda pre vytváranie inštancií SemPracaViewModel.
- * Implementuje ViewModelProvider.Factory pre dependency injection.
  * 
  * Zdroj: https://medium.com/@1mailanton/approaches-to-creating-viewmodel-in-android-f9f6f62a155a
  *
