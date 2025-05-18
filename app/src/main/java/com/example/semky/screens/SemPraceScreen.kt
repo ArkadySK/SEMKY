@@ -34,9 +34,6 @@ import com.example.semky.data.model.SemPraca
 import com.example.semky.viewmodel.DeadlineViewModel
 import com.example.semky.viewmodel.SemPracaViewModel
 import com.example.semky.viewmodel.SemPracaPointsViewModel
-import java.util.Date
-import java.text.SimpleDateFormat
-import java.util.Locale
 
 @Composable
 fun SemPraceScreen(
@@ -46,6 +43,7 @@ fun SemPraceScreen(
     modifier: Modifier = Modifier
 ) {
     val semPraceList by viewModel.semPrace.collectAsState()
+    val semPraceFiltered = semPraceList.filter { x -> !x.isFinished }
     var selectedPracaId by rememberSaveable { mutableStateOf<Long?>(null) }
     var showDialog by rememberSaveable { mutableStateOf(false) }
     val selectedPraca = selectedPracaId?.let { id ->
@@ -56,28 +54,27 @@ fun SemPraceScreen(
         modifier = modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(16.dp))
         LazyColumn(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(4.dp)
+            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            items(semPraceList) { praca ->
-                if (!praca.isFinished) {
-                    PracaCard(
-                        praca = praca,
-                        onDelete = {
-                            pointsViewModel.deletePoints(praca)
-                            viewModel.deletePraca(praca)
-                        },
-                        onClick = {
-                            selectedPracaId = praca.id
-                            showDialog = true
-                        },
-                        modifier = Modifier
-                    )
-                }
+            items(semPraceFiltered) { praca ->
+                PracaCard(
+                    praca = praca,
+                    onDelete = {
+                        pointsViewModel.deletePoints(praca)
+                        deadlineViewModel.deleteByPracaId(praca.id)
+                        viewModel.deletePraca(praca)
+                    },
+                    onClick = {
+                        selectedPracaId = praca.id
+                        showDialog = true
+                    },
+                    modifier = Modifier
+                )
             }
         }
     }
@@ -134,7 +131,7 @@ fun PracaCard(
                         Text(
                             text = stringResource(R.string.finished),
                             style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onPrimary
+                            color = MaterialTheme.colorScheme.primary
                         )
                     }
                 }
