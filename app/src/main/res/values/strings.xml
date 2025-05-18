@@ -6,6 +6,7 @@
     <string name="edit_semPraca">Úprava semestrálnej práce</string>
     <string name="name">Názov</string>
     <string name="information">Informácie</string>
+    <string name="deadline">Termín</string>
     <string name="deadlines">Termíny</string>
     <string name="deadline_name">Názov termínu</string>
     <string name="accessibility_remove_deadline">Remove deadline</string>
@@ -45,4 +46,5 @@
     <string name="deadlines_channel_name">Termíny</string>
     <string name="deadlines_channel_description">Upozornenia na blížiace sa termíny</string>
     <string name="deadline_approaching">Blížiaci sa termín</string>
+    <string name="deadline_with_name_approaching">Termín s názvom \'%1$s\' sa blíži!</string>
 </resources>

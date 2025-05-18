@@ -101,13 +101,13 @@ class DeadlineNotificationWorker(
     params: WorkerParameters
 ) : Worker(context, params) {
     override fun doWork(): Result {
-        val deadlineName = inputData.getString("deadline_name") ?: "Deadline"
+        val deadlineName = inputData.getString("deadline_name") ?: applicationContext.getString(R.string.deadline)
         val notificationId = inputData.getLong("deadline_id", 0L).toInt()
 
         val builder = NotificationCompat.Builder(applicationContext, NotificationManager.CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_launcher_background)
-            .setContentTitle(applicationContext.getString(R.string.deadline_approaching)) //TODO: stringy do resourcov
-            .setContentText("Termín s názvom $deadlineName sa blíži!")
+            .setContentTitle(applicationContext.getString(R.string.deadline_approaching))
+            .setContentText(applicationContext.getString(R.string.deadline_with_name_approaching, deadlineName))
             .setPriority(NotificationCompat.PRIORITY_HIGH)
 
         with(NotificationManagerCompat.from(applicationContext)) {
