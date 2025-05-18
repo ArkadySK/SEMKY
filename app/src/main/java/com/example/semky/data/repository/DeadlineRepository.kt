@@ -19,7 +19,5 @@ class DeadlineRepository(private val deadlineDao: DeadlineDao) {
 
     suspend fun deleteDeadline(deadline: Deadline) = deadlineDao.deleteDeadline(deadline)
 
-    suspend fun deleteByPracaId(pracaId: Long) = deadlineDao.deleteByPracaId(pracaId)
-
     fun getAllByPracaId(pracaId: Long): Flow<List<Deadline>> = deadlineDao.getAllByPracaId(pracaId)
 }

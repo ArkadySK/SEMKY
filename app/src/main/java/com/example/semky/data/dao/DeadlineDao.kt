@@ -24,9 +24,6 @@ interface DeadlineDao {
     @Delete
     suspend fun deleteDeadline(deadline: Deadline)
 
-    @Query("DELETE FROM deadlines WHERE semPracaId = :pracaId")
-    suspend fun deleteByPracaId(pracaId: Long)
-
     @Query("SELECT * FROM deadlines WHERE semPracaId = :pracaId")
     fun getAllByPracaId(pracaId: Long): Flow<List<Deadline>>
 } 
