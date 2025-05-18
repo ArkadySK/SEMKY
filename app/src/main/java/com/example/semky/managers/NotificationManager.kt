@@ -1,0 +1,98 @@
+// app/src/main/java/com/example/semky/notifications/NotificationManager.kt
+package com.example.semky.notifications
+
+import android.Manifest
+import android.app.NotificationChannel
+import android.app.NotificationManager as SysNotificationManager
+import android.content.Context
+import android.content.pm.PackageManager
+import android.os.Build
+import androidx.core.app.ActivityCompat
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
+import androidx.work.*
+import androidx.work.WorkManager
+import com.example.semky.R
+import com.example.semky.data.model.Deadline
+import java.util.concurrent.TimeUnit
+
+object NotificationManager {
+    const val CHANNEL_ID = "deadlines_channel"
+
+    // src: https://developer.android.com/develop/ui/views/notifications/build-notification#kotlin
+    fun createNotificationChannel(context: Context) {
+        val name = context.getString(R.string.deadlines_channel_name)
+        val descriptionText = context.getString(R.string.deadlines_channel_description)
+        val importance = SysNotificationManager.IMPORTANCE_HIGH
+        val channel = NotificationChannel(CHANNEL_ID, name, importance).apply {
+            description = descriptionText
+        }
+        val notificationManager: SysNotificationManager =
+            context.getSystemService(Context.NOTIFICATION_SERVICE) as SysNotificationManager
+        notificationManager.createNotificationChannel(channel)
+    }
+
+    fun scheduleDeadlineNotification(context: Context, deadline: Deadline) {
+        createNotificationChannel(context)
+
+        val delay = deadline.date.time - System.currentTimeMillis() - TimeUnit.HOURS.toMillis(1) // 1 hour before
+        if (delay <= 0) return // Neplánovať upozornenia v minulosti
+
+        val data = workDataOf(
+            "deadline_id" to deadline.id,
+            "deadline_name" to deadline.name,
+            "deadline_time" to deadline.date.time
+        )
+
+        val workRequest = OneTimeWorkRequestBuilder<DeadlineNotificationWorker>()
+            .setInitialDelay(delay, TimeUnit.MILLISECONDS)
+            .setInputData(data)
+            .addTag("deadline_${deadline.id}")
+            .build()
+
+        WorkManager.getInstance(context).enqueueUniqueWork(
+            "deadline_${deadline.id}",
+            ExistingWorkPolicy.REPLACE,
+            workRequest
+        )
+    }
+
+    fun cancelDeadlineNotification(context: Context, deadlineId: Long) {
+        WorkManager.getInstance(context).cancelUniqueWork("deadline_$deadlineId")
+    }
+}
+
+class DeadlineNotificationWorker(
+    context: Context,
+    params: WorkerParameters
+) : Worker(context, params) {
+    override fun doWork(): Result {
+        val deadlineName = inputData.getString("deadline_name") ?: "Deadline"
+        val notificationId = inputData.getLong("deadline_id", 0L).toInt()
+
+        val builder = NotificationCompat.Builder(applicationContext, NotificationManager.CHANNEL_ID)
+            //.setSmallIcon(R.drawable.notification_icon)
+            .setContentTitle(applicationContext.getString(R.string.deadline_approaching)) //TODO: stringy do resourcov
+            .setContentText("Termín s názvom $deadlineName sa blíži!")
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+
+        with(NotificationManagerCompat.from(applicationContext)) {
+            if (ActivityCompat.checkSelfPermission(
+                    this@DeadlineNotificationWorker.applicationContext,
+                    Manifest.permission.POST_NOTIFICATIONS
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                return Result.failure()
+            }
+            notify(notificationId, builder.build())
+        }
+        return Result.success()
+    }
+}
