@@ -225,6 +225,7 @@ fun EditSemPracaScreen(
                             }
                         }
                     }
+                    // Zdroj tejto časti (inšpirovaný): https://composables.com/jetpack-compose-tutorials/activityresultcontract 
                     val launcher = rememberLauncherForActivityResult(
                         contract = ActivityResultContracts.GetContent()
                     ) { uri: Uri? ->
@@ -234,7 +235,7 @@ fun EditSemPracaScreen(
                         }
                     }
                     Button(
-                        onClick = { launcher.launch("*/*") },
+                        onClick = { launcher.launch("*/*") }, // ľubovolný typ
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Icon(
