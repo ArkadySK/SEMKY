@@ -55,8 +55,6 @@ fun EditSemPracaScreen(
     var newDeadlineName by rememberSaveable { mutableStateOf("") }
     var newDeadlineDate by rememberSaveable { mutableStateOf<Date?>(null) }
 
-    var deadlines by rememberSaveable { mutableStateOf(deadlinesDb?: emptyList<Deadline>()) }
-
     var selectedAttachment by rememberSaveable { mutableStateOf<Long?>(null) }
     var showAttachmentDialog by rememberSaveable { mutableStateOf(false) }
 
@@ -90,6 +88,8 @@ fun EditSemPracaScreen(
 
         // Edit / Add mod 
         if (isEditing) {
+            var deadlines by rememberSaveable { mutableStateOf(deadlinesDb) }
+
             Card(modifier = Modifier.fillMaxWidth()) {
                 OutlinedTextField(
                     value = name,
